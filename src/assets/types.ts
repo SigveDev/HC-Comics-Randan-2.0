@@ -54,6 +54,7 @@ export type Title = {
     Author: Author;
     Chapters: Chapter[];
     Followers: number;
+    thumbnail: string;
 };
 export type TitleRequest = {
     documents: Title[];

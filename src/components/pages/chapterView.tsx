@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Chapter, LikesRequest } from "../../assets/types";
 import { checkUserData, getChapterByID, getThumbnail, getLikedChapters, likeChapterToggle, shareChapter } from "../../lib/Appwrite";
 import { calculateHowLongAgo } from "../../functions/CalculateHowLongAgo";
-import { Heart, MessageSquare, Forward } from 'lucide-react';
+import { Heart, HeartHandshake, MessageSquare, Forward } from 'lucide-react';
 import MiniPageView from "../miniPageView";
 
 const ChapterView = () => {
@@ -114,7 +114,13 @@ const ChapterView = () => {
                                 <p className='mt-2 text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
                             </div>
                             <div className='flex flex-col items-center justify-between h-10 gap-4 mt-4 mr-4 w-fit'>
-                                {loggedIn && <button type="button" className={`flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit rounded p-1 ${liked && "bg-[--primary]"}`} onClick={handleLikeing}><Heart /></button>}
+                                {loggedIn && (
+                                    liked ?
+                                        <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--accentText] h-fit rounded p-1`} onClick={handleLikeing}><HeartHandshake /></button>
+                                    :
+                                        <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit rounded p-1`} onClick={handleLikeing}><Heart /></button>
+                                    )
+                                }
                                 {loggedIn && <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit'><MessageSquare /></button>}
                                 <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit' onClick={handleShare}><Forward /></button>
                             </div>
@@ -129,7 +135,7 @@ const ChapterView = () => {
                     <div className="grid w-full grid-cols-4 gap-2 p-2 bg-[--secondary]">
                         {chapter?.pages.map((page: string, index: number) => {
                             return (
-                                <MiniPageView pageId={page} key={index} />
+                                <MiniPageView pageId={page} index={index} key={index} />
                             );
                         })}
                     </div>

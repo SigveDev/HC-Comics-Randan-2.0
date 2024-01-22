@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
-import { getPage } from "../lib/Appwrite";
+import { getPagePreview } from "../lib/Appwrite";
 
-const MiniPageView = ({ pageId }: { pageId: string }) => {
+const MiniPageView = ({ pageId, index }: { pageId: string, index: number }) => {
+    const chapterId = window.location.pathname.split('/')[2];
     const [page, setPage] = useState<URL>();
 
     useEffect(() => {
         const fetchPage = async () => {
-            const page: URL = await getPage(pageId) as URL;
+            const page: URL = await getPagePreview(pageId) as URL;
             setPage(page);
         }
         fetchPage();
     }, []);
 
     return (
-        <div className='w-full h-fit'>
+        <a href={"/p/" + chapterId + "/" + (index + 1)} className='w-full h-fit'>
             {page && <img className='w-full aspect-[2/3]' src={page.href} alt={pageId} />}
-        </div>
+        </a>
     );
 };
 

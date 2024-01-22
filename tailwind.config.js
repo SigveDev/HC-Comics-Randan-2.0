@@ -12,11 +12,9 @@ export default {
       xl: '1440px',
     },
     extend: {
-      colors: {
-        'primary': '#0d98db',
-        'secondary': '#0B0A34',
-        'third': '#00468C',
-        'gradientStart': '#041031',
+      height: {
+        header: '3.5rem',
+        fullpage: 'calc(100dvh - 3.5rem)',
       },
     },
   },

@@ -10,9 +10,12 @@ import DefaultLayout from './layouts/default';
 
 import Fallback from './components/pages/fallback';
 import Home from './components/pages/home';
+import Titles from './components/pages/titles';
+import TitleView from './components/pages/titleView';
 import Login from './components/pages/login';
 import Register from './components/pages/register';
 import ChapterView from './components/pages/chapterView';
+import PageView from './components/pages/pageView';
 
 function App() {
   const [runOnce, setRunOnce] = useState<boolean>(false);
@@ -103,10 +106,13 @@ function App() {
         {user && <DefaultLayout user={user}>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/titles" element={<Titles />} />
             <Route path="/login" element={user !== "error" ? <Navigate to="/" /> : <Login />} />
             <Route path="/register" element={user !== "error" ? <Navigate to="/" /> : <Register />} />
 
-            <Route path="/v/:chapterID" element={<ChapterView />} />
+            <Route path="/c/:chapterID" element={<ChapterView />} />
+            <Route path="/t/:titleID" element={<TitleView />} />
+            <Route path="/p/:chapterID/:pageID" element={<PageView />} />
           </Routes>
         </DefaultLayout>}
         <Routes>

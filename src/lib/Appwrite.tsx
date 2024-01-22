@@ -163,11 +163,57 @@ export const getThumbnail = (id: string) => {
     }
 };
 
+export const getThumbnailPreview = (id: string) => {
+    try {
+        const thumbnail = storage.getFilePreview(
+            (import.meta as any).env.VITE_STORAGE_THUMBNAIL_ID || '',
+            id,
+            800,
+            1200,
+            undefined,
+            50,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            "webp"
+        );
+        return thumbnail;
+    } catch (error) {
+        return error;
+    }
+}
+
 export const getPage = (id: string) => {
     try {
         const page = storage.getFileView(
             (import.meta as any).env.VITE_STORAGE_PAGES_ID || '',
             id
+        );
+        return page;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getPagePreview = (id: string) => {
+    try {
+        const page = storage.getFilePreview(
+            (import.meta as any).env.VITE_STORAGE_PAGES_ID || '',
+            id,
+            400,
+            600,
+            undefined,
+            50,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            "webp"
         );
         return page;
     } catch (error) {
@@ -189,9 +235,20 @@ export const getSocials = async () => {
 
 export const getSocialImage = (id: string) => {
     try {
-        const image = storage.getFileView(
+        const image = storage.getFilePreview(
             (import.meta as any).env.VITE_STORAGE_SOCIALS_ID || '',
-            id
+            id,
+            150,
+            150,
+            undefined,
+            80,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            "webp"
         );
         return image;
     } catch (error) {
@@ -296,6 +353,43 @@ export const shareChapter = async (chapterId: string) => {
             }
         );
         return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getTitles = async () => {
+    try {
+        const titles = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_TITLES_TABLE_ID || '',
+        );
+        return titles;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getTitleByID = async (id: string) => {
+    try {
+        const title = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_TITLES_TABLE_ID || '',
+            id,
+        );
+        return title;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getTitleImage = (id: string) => {
+    try {
+        const image = storage.getFileView(
+            (import.meta as any).env.VITE_STORAGE_TITLETHUMBNAIL_ID || '',
+            id,
+        );
+        return image;
     } catch (error) {
         return error;
     }

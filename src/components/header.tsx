@@ -29,7 +29,7 @@ const Header = ({ user }: any) => {
     
     return (
         <>
-            <header className={`relative z-50 flex flex-row items-center justify-center border-b-2 h-14 gap-32 border-[--primary] bg-gradient-to-b from-[--fourthly] to-transparent`}>
+            <header className={`relative z-50 flex flex-row items-center justify-center border-b-2 h-header gap-32 border-[--primary] bg-gradient-to-b from-[--fourthly] to-transparent`}>
                 <a href="/" className={`flex items-center justify-center h-full pl-6 pr-6 font-semibold text-[--primaryText] w-fit ${page === "" ? `bg-gradient-to-b from-[--primary] to-transparent` : `hover:bg-gradient-to-b hover:from-[--secondary] hover:to-transparent`}`}>Home</a>
                 <a href="/titles" className={`flex items-center justify-center h-full pl-6 pr-6 font-semibold text-[--primaryText] w-fit ${page === "titles" ? `bg-gradient-to-b from-[--primary] to-transparent` : `hover:bg-gradient-to-b hover:from-[--secondary] hover:to-transparent`}`}>Titles</a>
                 <a href="/art" className={`flex items-center justify-center h-full pl-6 pr-6 font-semibold text-[--primaryText] w-fit ${page === "art" ? `bg-gradient-to-b from-[--primary] to-transparent` : `hover:bg-gradient-to-b hover:from-[--secondary] hover:to-transparent`}`}>Art</a>
@@ -46,7 +46,7 @@ const Header = ({ user }: any) => {
                 <a href="/profile" className={`flex items-center justify-center w-full h-full p-4 pl-10 pr-10 text-[--primaryText] hover:bg-[--secondary]`}>Profile</a>
                 <button className={`flex items-center justify-center w-full h-full p-4 pl-10 pr-10 text-[--primaryText] hover:bg-[--secondary]`} onClick={handleLogout}>Logout</button>
             </div>}
-            {menuSataus === true && <div className="fixed inset-0 z-10 w-full h-full bg-black/25" onClick={toggleMenuState}></div>}
+            {menuSataus === true && <div className="fixed inset-0 z-20 w-full h-full bg-black/25" onClick={toggleMenuState}></div>}
         </>
     );
 };

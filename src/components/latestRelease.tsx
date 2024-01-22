@@ -28,7 +28,7 @@ const LatestRelease = (chapter: Chapter) => {
     return (
         <div className='w-full aspect-[4/7] flex flex-col gap-2'>
             <p className='flex items-center justify-start h-7 pl-2 font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Latest release</p>
-            <a href={"/v/" + chapter.$id} className='flex flex-col h-full gap-2'>
+            <a href={"/c/" + chapter.$id} className='flex flex-col h-full gap-2'>
                 <div className='relative w-full h-fit'>
                     {thumbnail && <img className='w-full aspect-[2/3]' src={thumbnail.href} alt={chapter.title} />}
                     <h3 className='absolute bottom-0 left-0 flex items-end justify-start w-full h-20 pb-4 pl-2 font-semibold text-[--primaryText] bg-gradient-to-t from-black to-transparent'>{chapter.title}</h3>
