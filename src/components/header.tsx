@@ -46,7 +46,7 @@ const Header = ({ user }: any) => {
                 <a href="/profile" className={`flex items-center justify-center w-full h-full p-4 pl-10 pr-10 text-[--primaryText] hover:bg-[--secondary]`}>Profile</a>
                 <button className={`flex items-center justify-center w-full h-full p-4 pl-10 pr-10 text-[--primaryText] hover:bg-[--secondary]`} onClick={handleLogout}>Logout</button>
             </div>}
-            {menuSataus === true && <div className="fixed inset-0 z-20 w-full h-full bg-black/25" onClick={toggleMenuState}></div>}
+            {menuSataus === true && <div className="fixed inset-0 z-40 w-full h-full bg-black/25" onClick={toggleMenuState}></div>}
         </>
     );
 };

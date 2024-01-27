@@ -23,6 +23,7 @@ export type ChapterStats = {
     Chapter: Chapter;
     Views: number;
     Likes: number;
+    Shares: number;
 };
 export type ChapterStatsRequest = {
     documents: ChapterStats[];
@@ -39,6 +40,7 @@ export type Author = {
     Chapters: Chapter[];
     Titles: Title[];
     Followers: number;
+    Art: Art[];
 };
 export type AuthorRequest = {
     documents: Author[];
@@ -96,9 +98,33 @@ export type Likes = {
     $id: string;
     userId: string;
     Chapters: Chapter[];
+    Art: Art[];
 };
 
 export type LikesRequest = {
     documents: Likes[];
     total: number;
+};
+
+export type Art = {
+    $id: string;
+    $createdAt: Date;
+    $updatedAt: Date;
+    title: string;
+    description: string;
+    image: string;
+    Author: Author;
+};
+
+export type ArtRequest = {
+    documents: Art[];
+    total: number;
+};
+
+export type ArtStats = {
+    $id: string;
+    Art: Art;
+    Views: number;
+    Likes: number;
+    Shares: number;
 };

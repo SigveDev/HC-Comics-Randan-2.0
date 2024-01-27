@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Chapter, LikesRequest, Title } from "../../assets/types";
-import { checkUserData, getLikedChapters, getTitleByID } from "../../lib/Appwrite";
+import { checkUserData, getLiked, getTitleByID } from "../../lib/Appwrite";
 import ChapterViewH from "../chapterViewH";
 
 const TitleView = () => {
@@ -29,7 +29,7 @@ const TitleView = () => {
             } else {
                 setLoggedIn(false);
             }
-            const likedChapters: LikesRequest = await getLikedChapters(user.$id) as LikesRequest;
+            const likedChapters: LikesRequest = await getLiked(user.$id) as LikesRequest;
             setLikedChapters(likedChapters.documents[0].Chapters as Chapter[]);
         }
         fetchLikedChapters();

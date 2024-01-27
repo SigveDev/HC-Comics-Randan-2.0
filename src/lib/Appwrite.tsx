@@ -1,4 +1,4 @@
-import { Chapter, LikesRequest } from '@/assets/types';
+import { Art, Chapter, LikesRequest } from '@/assets/types';
 import { Client, Account, Databases, Storage, Query, ID } from 'appwrite';
 
 const client = new Client();
@@ -256,28 +256,29 @@ export const getSocialImage = (id: string) => {
     }
 };
 
-export const getLikedChapters = async (userId: string) => {
+export const getLiked = async (userId: string) => {
     try {
-        const likedChapters = await databases.listDocuments(
+        const liked = await databases.listDocuments(
             (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
             (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
             [
                 Query.equal('userId', userId),
             ]
         );
-        if (likedChapters.total === 0) {
-            const newLikedChapters = await databases.createDocument(
+        if (liked.total === 0) {
+            const newLiked = await databases.createDocument(
                 (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
                 (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
                 ID.unique(),
                 {
                     userId: userId,
                     Chapters: [],
+                    Art: [],
                 }
             );
-            return newLikedChapters;
+            return newLiked;
         } else {
-            return likedChapters;
+            return liked;
         }
     } catch (error) {
         return error;
@@ -286,7 +287,7 @@ export const getLikedChapters = async (userId: string) => {
 
 export const likeChapterToggle = async (chapterId: string, userId: string) => {
     try {
-        const likedChapters: LikesRequest = await getLikedChapters(userId) as LikesRequest;
+        const likedChapters: LikesRequest = await getLiked(userId) as LikesRequest;
         const likedChapter = likedChapters.documents[0].Chapters.find((chapter: Chapter) => chapter.$id === chapterId);
 
         const chapter = await databases.getDocument(
@@ -337,6 +338,59 @@ export const likeChapterToggle = async (chapterId: string, userId: string) => {
     }
 };
 
+export const likeArtToggle = async (artId: string, userId: string) => {
+    try {
+        const likedArt: LikesRequest = await getLiked(userId) as LikesRequest;
+        const likedArtPost = likedArt.documents[0].Art.find((art: Art) => art.$id === artId);
+
+        const art = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ART_TABLE_ID || '',
+            artId
+        );
+
+        if (likedArtPost) {
+            const newLikedArt = await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
+                likedArt.documents[0].$id,
+                {
+                    Art: likedArt.documents[0].Art.filter((art: Art) => art.$id !== artId),
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_ARTSTATS_TABLE_ID || '',
+                art.ArtStats.$id,
+                {
+                    Likes: art.ArtStats.Likes - 1,
+                }
+            );
+            return newLikedArt;
+        } else {
+            const newLikedArt = await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
+                likedArt.documents[0].$id,
+                {
+                    Art: [...likedArt.documents[0].Art, art],
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_ARTSTATS_TABLE_ID || '',
+                art.ArtStats.$id,
+                {
+                    Likes: art.ArtStats.Likes + 1,
+                }
+            );
+            return newLikedArt;
+        }
+    } catch (error) {
+        return error;
+    }
+};
+
 export const shareChapter = async (chapterId: string) => {
     try {
         const chapter = await databases.getDocument(
@@ -350,6 +404,27 @@ export const shareChapter = async (chapterId: string) => {
             chapter.ChapterStats.$id,
             {
                 Shares: chapter.ChapterStats.Shares + 1,
+            }
+        );
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const shareArt = async (artId: string) => {
+    try {
+        const art = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ART_TABLE_ID || '',
+            artId
+        );
+        await databases.updateDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ARTSTATS_TABLE_ID || '',
+            art.ArtStats.$id,
+            {
+                Shares: art.ArtStats.Shares + 1,
             }
         );
         return true;
@@ -390,6 +465,93 @@ export const getTitleImage = (id: string) => {
             id,
         );
         return image;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getArtPostsPagination = async (placement: number) => {
+    try {
+        const offset = placement * 24;
+        const artPosts = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ART_TABLE_ID || '',
+            [
+                Query.orderDesc("$createdAt"),
+                Query.limit(24),
+                Query.offset(offset)
+            ]
+        );
+        return artPosts;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getArtById = async (id: string) => {
+    try {
+        const art = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ART_TABLE_ID || '',
+            id
+        );
+        return art;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getArtImagePreview = (id: string) => {
+    try {
+        const image = storage.getFilePreview(
+            (import.meta as any).env.VITE_STORAGE_ART_ID || '',
+            id,
+            400,
+            600,
+            undefined,
+            50,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            "webp"
+        );
+        return image;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getArtImage = (id: string) => {
+    try {
+        const image = storage.getFileView(
+            (import.meta as any).env.VITE_STORAGE_ART_ID || '',
+            id
+        );
+        return image;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const giveArtView = async (artId: string) => {
+    try {
+        const art = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ART_TABLE_ID || '',
+            artId
+        );
+        await databases.updateDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ARTSTATS_TABLE_ID || '',
+            art.ArtStats.$id,
+            {
+                Views: art.ArtStats.Views + 1,
+            }
+        );
+        return true;
     } catch (error) {
         return error;
     }

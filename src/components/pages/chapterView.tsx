@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Chapter, LikesRequest } from "../../assets/types";
-import { checkUserData, getChapterByID, getThumbnail, getLikedChapters, likeChapterToggle, shareChapter } from "../../lib/Appwrite";
+import { checkUserData, getChapterByID, getThumbnail, getLiked, likeChapterToggle, shareChapter } from "../../lib/Appwrite";
 import { calculateHowLongAgo } from "../../functions/CalculateHowLongAgo";
 import { Heart, HeartHandshake, MessageSquare, Forward } from 'lucide-react';
 import MiniPageView from "../miniPageView";
@@ -57,7 +57,7 @@ const ChapterView = () => {
     useEffect(() => {
         const fetchLikedChapters = async () => {
             if (userId) {
-                const likedChapters: LikesRequest = await getLikedChapters(userId) as LikesRequest;
+                const likedChapters: LikesRequest = await getLiked(userId) as LikesRequest;
                 const likedStatus = likedChapters.documents[0].Chapters.find((likedChapter: Chapter) => likedChapter.$id === chapterID) ? true : false;
                 setLiked(likedStatus);
             }

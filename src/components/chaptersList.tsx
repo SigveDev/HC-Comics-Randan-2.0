@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Chapter, LikesRequest } from "@/assets/types";
 import { ChevronUp, ChevronDown } from 'lucide-react';
-import { getLikedChapters, checkUserData } from "../lib/Appwrite";
+import { getLiked, checkUserData } from "../lib/Appwrite";
 import ChapterViewH from "./chapterViewH";
 
 const ChaptersList = ({ chapters }: { chapters: Chapter[] }) => {
@@ -20,7 +20,7 @@ const ChaptersList = ({ chapters }: { chapters: Chapter[] }) => {
             } else {
                 setLoggedIn(false);
             }
-            const likedChapters: LikesRequest = await getLikedChapters(user.$id) as LikesRequest;
+            const likedChapters: LikesRequest = await getLiked(user.$id) as LikesRequest;
             setLikedChapters(likedChapters.documents[0].Chapters as Chapter[]);
         }
         fetchLikedChapters();
