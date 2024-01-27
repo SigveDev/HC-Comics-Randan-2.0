@@ -6,10 +6,15 @@ const Register = () => {
     const [password, setPassword] = useState<string>("");
     const [password2, setPassword2] = useState<string>("");
     const [name, setName] = useState<string>("");
+    const [error, setError] = useState<string>("");
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
         if (password === password2) {
+            if (password.length < 8) {
+                alert("Password must be at least 8 characters long!");
+                return;
+            }
             const res: any = createUser(email, password, name);
             res.then(() => {
                 const login = account.createEmailSession(email, password);
@@ -20,6 +25,7 @@ const Register = () => {
                 });
             }).catch((err: any) => {
                 console.log(err);
+                setError("User with email already exists!");
             });
         } else {
             alert("Passwords do not match!");
@@ -35,6 +41,7 @@ const Register = () => {
                     <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                     <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="password" placeholder="Confirm Password" value={password2} onChange={(e) => setPassword2(e.target.value)} />
+                    {error && <p className="text-red-600">{error}</p>}
                     <a href="/login" className="text-[--primary]">Have a user?</a>
                     <button className="w-2/3 h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly]" type="submit">Register</button>
                 </form>

@@ -4,6 +4,7 @@ import { account } from "../../lib/Appwrite";
 const Login = () => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [error, setError] = useState<string>("");
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
@@ -12,6 +13,7 @@ const Login = () => {
             window.location.href = "/";
         }).catch((err) => {
             console.log(err);
+            setError("Invalid email or password");
         });
     };
 
@@ -22,6 +24,7 @@ const Login = () => {
                     <h1 className="text-xl text-[--primaryText]">Login</h1>
                     <input className="w-full h-10 p-2 text-[primaryText] bg-[--secondary] focus-visible:outline-none" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
                     <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    {error && <p className="text-red-600">{error}</p>}
                     <a href="/register" className="text-[--accentText]">New user?</a>
                     <button className="w-2/3 h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly]" type="submit">Login</button>
                     <hr className="w-full mt-4 mb-4" />
