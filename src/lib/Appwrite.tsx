@@ -556,3 +556,44 @@ export const giveArtView = async (artId: string) => {
         return error;
     }
 };
+
+export const getSearchResults = async (query: string) => {
+    try {
+        const searchResults = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || '',
+            [
+                Query.search("title", query),
+                Query.limit(10)
+            ]
+        );
+        const titlesResults = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_TITLES_TABLE_ID || '',
+            [
+                Query.search("name", query),
+                Query.limit(10)
+            ]
+        );
+        const authorsResults = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_AUTHORS_TABLE_ID || '',
+            [
+                Query.search("name", query),
+                Query.limit(10)
+            ]
+        );
+        const artResults = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ART_TABLE_ID || '',
+            [
+                Query.search("title", query),
+                Query.limit(10)
+            ]
+        );
+        const all = { chapters: searchResults.documents, titles: titlesResults.documents, authors: authorsResults.documents, art: artResults.documents };
+        return all;
+    } catch (error) {
+        return error;
+    }
+};

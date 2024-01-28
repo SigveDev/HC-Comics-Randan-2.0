@@ -128,3 +128,10 @@ export type ArtStats = {
     Likes: number;
     Shares: number;
 };
+
+export type Search = {
+    chapters: Chapter[];
+    titles: Title[];
+    authors: Author[];
+    art: Art[];
+};

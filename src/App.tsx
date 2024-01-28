@@ -18,6 +18,7 @@ import ChapterView from './components/pages/chapterView';
 import PageView from './components/pages/pageView';
 import ArtPage from './components/pages/art';
 import ArtView from './components/pages/artView';
+import SearchPage from './components/pages/search';
 
 function App() {
   const [runOnce, setRunOnce] = useState<boolean>(false);
@@ -105,11 +106,12 @@ function App() {
   return (
     <BrowserRouter>
       <div className='w-full bg-[--background] min-h-dvh'>
-        {user && <DefaultLayout user={user}>
+        <DefaultLayout user={user}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/titles" element={<Titles />} />
             <Route path="/art" element={<ArtPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path="/login" element={user !== "error" ? <Navigate to="/" /> : <Login />} />
             <Route path="/register" element={user !== "error" ? <Navigate to="/" /> : <Register />} />
 
@@ -117,19 +119,10 @@ function App() {
             <Route path="/t/:titleID" element={<TitleView />} />
             <Route path="/p/:chapterID/:pageID" element={<PageView />} />
             <Route path="/a/:artID" element={<ArtView />} />
-          </Routes>
-        </DefaultLayout>}
-        <Routes>
-          <Route path="/" element={<></>} />
-          <Route path="/titles" element={<></>} />
-          <Route path="/art" element={<></>} />
 
-          <Route path="/c/:chapterID" element={<></>} />
-          <Route path="/t/:titleID" element={<></>} />
-          <Route path="/p/:chapterID/:pageID" element={<></>} />
-          <Route path="/a/:artID" element={<></>} />
-          <Route path="/fallback/:jwt" element={<Fallback />} />
-        </Routes>
+            <Route path="/fallback/:jwt" element={<Fallback />} />
+          </Routes>
+        </DefaultLayout>
       </div>
     </BrowserRouter>
   )
