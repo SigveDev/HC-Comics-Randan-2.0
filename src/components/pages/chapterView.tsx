@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Chapter, LikesRequest } from "../../assets/types";
-import { checkUserData, getChapterByID, getThumbnail, getLiked, likeChapterToggle, shareChapter } from "../../lib/Appwrite";
+import { checkUserData, getChapterByID, getThumbnail, getLiked, likeChapterToggle, shareChapter, getAuthorPFP } from "../../lib/Appwrite";
 import { calculateHowLongAgo } from "../../functions/CalculateHowLongAgo";
 import { Heart, HeartHandshake, MessageSquare, Forward } from 'lucide-react';
 import MiniPageView from "../miniPageView";
+import CommentViewH from "../commentViewH";
 
 const ChapterView = () => {
     const chapterID = window.location.pathname.split('/')[2];
@@ -14,6 +15,7 @@ const ChapterView = () => {
     const [formatedNumber, setFormatedNumber] = useState<string>();
     const [howLongAgo, setHowLongAgo] = useState<string>();
     const [liked, setLiked] = useState<boolean>(false);
+    const [authorPFP, setAuthorPFP] = useState<string>();
 
     useEffect(() => {
         const user = checkUserData();
@@ -32,6 +34,16 @@ const ChapterView = () => {
         }
         fetchChapter();
     }, [chapterID]);
+
+    useEffect(() => {
+        const fetchAuthorPFP = async () => {
+            if (chapter) {
+                const authorPFP: string = await getAuthorPFP(chapter.Author.$id) as string;
+                setAuthorPFP(authorPFP);
+            }
+        }
+        fetchAuthorPFP();
+    }, [chapter]);
 
     useEffect(() => {
         const fetchThumbnail = async () => {
@@ -67,8 +79,8 @@ const ChapterView = () => {
 
     const handleLikeing = async () => {
         if (chapter && userId) {
-            await likeChapterToggle(chapter.$id, userId);
             setLiked(!liked);
+            await likeChapterToggle(chapter.$id, userId);
         }
     }
 
@@ -92,7 +104,7 @@ const ChapterView = () => {
 
     return (
         <div className='flex flex-col w-full h-fit'>
-            <div className="flex flex-col max-w-[1000px] w-full h-fit ml-auto mr-auto mt-12 gap-12">
+            <div className="flex flex-col max-w-[1000px] w-full h-fit ml-auto mr-auto mt-12 mb-12 gap-12">
                 <div className="flex flex-row gap-4 h-fit">
                     <div className='flex flex-col h-full gap-2'>
                         <div className='relative h-full w-fit'>
@@ -112,6 +124,10 @@ const ChapterView = () => {
                                 <h3 className='mb-2 text-lg font-medium text-[--primaryText]'>#{formatedNumber}</h3>
                                 <p className='text-sm font-medium text-[--primaryText] text-ellipsis'>{chapter?.subtitle}</p>
                                 <p className='mt-2 text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
+                                <a href={"/u/" + chapter?.Author.$id} className="flex flex-row items-center justify-start w-full h-12 gap-4 mt-2">
+                                    <img className='w-12 h-12 rounded-full' src={authorPFP} alt={chapter?.Author.name} />
+                                    <p className='text-xl font-bold text-[--primaryText]'>{chapter?.Author.name}</p>
+                                </a>
                             </div>
                             <div className='flex flex-col items-center justify-between h-10 gap-4 mt-4 mr-4 w-fit'>
                                 {loggedIn && (
@@ -121,16 +137,16 @@ const ChapterView = () => {
                                         <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit rounded p-1`} onClick={handleLikeing}><Heart /></button>
                                     )
                                 }
-                                {loggedIn && <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit'><MessageSquare /></button>}
+                                {loggedIn && <a href="#comments" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit'><MessageSquare /></a>}
                                 <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit' onClick={handleShare}><Forward /></button>
                             </div>
                         </div>
-                        <p className='flex flex-col w-full ml-4 text-[--primaryText] h-fit'>Descripton:</p>
+                        <p className='flex flex-col w-full pl-4 text-[--primaryText] h-fit'>Descripton:</p>
                         <hr className='w-auto mt-2 mb-1 ml-4 mr-4' />
-                        <p className="w-full h-full mb-4 ml-4 mr-4 text-[--primaryText]">{chapter?.description}</p>
+                        <p className="w-full h-full pb-4 pl-4 pr-4 text-[--primaryText] text-ellipsis">{chapter?.description}</p>
                     </div>
                 </div>
-                <div className="flex flex-col items-center justify-center w-full gap-1 mb-12">
+                <div className="flex flex-col items-center justify-center w-full gap-1 mb-4">
                     <h3 className="text-lg font-bold text-[--primaryText]">Pages</h3>
                     <div className="grid w-full grid-cols-4 gap-2 p-2 bg-[--secondary]">
                         {chapter?.pages.map((page: string, index: number) => {
@@ -140,6 +156,9 @@ const ChapterView = () => {
                         })}
                     </div>
                 </div>
+            </div>
+            <div className='w-full max-w-[1000px] ml-auto mr-auto' id='comments'>
+                <CommentViewH id={chapterID} loggedIn={loggedIn} chapterOrNot={true} />
             </div>
         </div>
     );

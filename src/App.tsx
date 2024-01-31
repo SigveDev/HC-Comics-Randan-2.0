@@ -19,6 +19,7 @@ import PageView from './components/pages/pageView';
 import ArtPage from './components/pages/art';
 import ArtView from './components/pages/artView';
 import SearchPage from './components/pages/search';
+import Profile from './components/pages/profile';
 
 function App() {
   const [runOnce, setRunOnce] = useState<boolean>(false);
@@ -112,13 +113,15 @@ function App() {
             <Route path="/titles" element={<Titles />} />
             <Route path="/art" element={<ArtPage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/login" element={user !== "error" ? <Navigate to="/" /> : <Login />} />
-            <Route path="/register" element={user !== "error" ? <Navigate to="/" /> : <Register />} />
+            <Route path="/login" element={user !== "error" && user !== null ? <Navigate to="/" /> : <Login />} />
+            <Route path="/register" element={user !== "error" && user !== null ? <Navigate to="/" /> : <Register />} />
 
             <Route path="/c/:chapterID" element={<ChapterView />} />
             <Route path="/t/:titleID" element={<TitleView />} />
             <Route path="/p/:chapterID/:pageID" element={<PageView />} />
             <Route path="/a/:artID" element={<ArtView />} />
+
+            <Route path="/profile" element={user !== "error" ? <Profile /> : <Navigate to="/" />} />
 
             <Route path="/fallback/:jwt" element={<Fallback />} />
           </Routes>

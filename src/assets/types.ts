@@ -24,6 +24,7 @@ export type ChapterStats = {
     Views: number;
     Likes: number;
     Shares: number;
+    Comments: number;
 };
 export type ChapterStatsRequest = {
     documents: ChapterStats[];
@@ -135,3 +136,57 @@ export type Search = {
     authors: Author[];
     art: Art[];
 };
+
+export type User = {
+    $id: string;
+    $createdAt: Date;
+    $updatedAt: Date;
+    name: string;
+    registration: Date;
+    status: boolean;
+    labels: [],
+    passwordUpdate: Date;
+    email: string;
+    phone: string;
+    emailVerification: boolean;
+    phoneVerification: boolean;
+    prefs: UserPrefs;
+    accessedAt: Date;
+}
+
+export type UserPrefs = {
+    pfp: string;
+    HC: string;
+    current: string;
+}
+
+export type PublicProfile = {
+    $id: string;
+    $createdAt: Date;
+    $updatedAt: Date;
+    userId: string;
+    username: string;
+    pfp: string;
+    Comments: Comments[];
+    public: boolean;
+}
+
+export type PublicProfileRequest = {
+    documents: PublicProfile[];
+    total: number;
+}
+
+export type Comments = {
+    $id: string;
+    $createdAt: Date;
+    $updatedAt: Date;
+    Owner: PublicProfile;
+    comment: string;
+    ChapterId: string;
+    ArtId: string;
+}
+
+export type CommentsRequest = {
+    documents: Comments[];
+    total: number;
+}

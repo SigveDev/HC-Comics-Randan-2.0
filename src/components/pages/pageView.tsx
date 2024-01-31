@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getChapterByID, getPage } from '../../lib/Appwrite';
+import { getChapterByID, getPage, updateCurrent } from '../../lib/Appwrite';
 import { useSwipeable } from 'react-swipeable';
 
 const PageView = () => {
@@ -16,6 +16,7 @@ const PageView = () => {
             const pageURL: URL = await getPage(pageID) as URL;
             setPageURL(pageURL);
             setMaxPage(chapter.pages.length);
+            await updateCurrent(chapterID);
         }
         fetchURL();
     }, [chapterID]);

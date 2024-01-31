@@ -1,17 +1,20 @@
 import { Art, Chapter, LikesRequest } from '@/assets/types';
-import { Client, Account, Databases, Storage, Query, ID } from 'appwrite';
+import { Client, Account, Databases, Storage, Query, ID, Avatars } from 'appwrite';
 
 const client = new Client();
 
 client
     .setEndpoint((import.meta as any).env.VITE_PROJECT_ENDPOINT || 'https://cloud.appwrite.io/v1')
-    .setProject((import.meta as any).env.VITE_PROJECT_ID || '65a423a318436867af35');
+    .setProject((import.meta as any).env.VITE_PROJECT_ID || '65a423a318436867af35')
+;
 
 export const account = new Account(client);
 
 export const databases = new Databases(client);
 
 export const storage = new Storage(client);
+
+export const avatars = new Avatars(client);
 
 export const logout = () => {
     try {
@@ -31,9 +34,24 @@ export const loginHCUser = (email: string, password: string) => {
     }
 };
 
-export const createHCUser = (id: string, email: string, name: string) => {
+export const createHCUser = async (id: string, email: string, name: string) => {
     try {
         const user = account.create(id, email, id, name);
+        account.createEmailSession(email, id);
+        account.updatePrefs({ "pfp": "", "HC": "true" });
+        await databases.createDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+            ID.unique(),
+            {
+                userId: id,
+                username: name,
+                pfp: "",
+                Comments: [],
+                public: false,
+            }
+        );
+        account.deleteSession('current');
         return user;
     } catch (error) {
         return error;
@@ -58,6 +76,139 @@ export const updateEmail = (email: string, id: string) => {
     }
 };
 
+export const updatePFP = async (file: File) => {
+    try {
+        let prevPrefs = await account.getPrefs();
+        if (prevPrefs.pfp !== "") {
+            await storage.deleteFile(
+                (import.meta as any).env.VITE_STORAGE_USERPFP_ID || '',
+                prevPrefs.pfp
+            );
+        }
+        const newPFP = await storage.createFile(
+            (import.meta as any).env.VITE_STORAGE_USERPFP_ID || '',
+            ID.unique(),
+            file
+        );
+        prevPrefs.pfp = newPFP.$id;
+        const user = await account.updatePrefs(prevPrefs);
+        return user;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getUserPFP = async () => {
+    try {
+        const userPrefs = await account.getPrefs();
+        const pfp = userPrefs.pfp;
+        if (pfp !== "") {
+            const pfpURL = storage.getFilePreview(
+                (import.meta as any).env.VITE_STORAGE_USERPFP_ID || '',
+                pfp,
+                100,
+                100,
+                'center',
+                100,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                "webp"
+            );
+            return pfpURL;
+        } else {
+            const avatar = avatars.getInitials();
+            return avatar;
+        }
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getAuthorPFP = async (id: string) => {
+    try {
+        const author = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_AUTHORS_TABLE_ID || '',
+            id
+        );
+        const pfp = author.pfp;
+        if (pfp !== "") {
+            const pfpURL = storage.getFilePreview(
+                (import.meta as any).env.VITE_STORAGE_AUTHORPFP_ID || '',
+                pfp,
+                100,
+                100,
+                'center',
+                100,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                "webp"
+            );
+            return pfpURL;
+        } else {
+            const avatar = avatars.getInitials();
+            return avatar;
+        }
+    } catch (error) {
+        return error;
+    }
+}
+
+export const getPublicUserPFP = async (id: string) => {
+    try {
+        const author = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+            [
+                Query.equal('userId', id),
+            ]
+        );
+        const pfp = author.documents[0].pfp;
+        if (pfp !== "") {
+            const pfpURL = storage.getFilePreview(
+                (import.meta as any).env.VITE_STORAGE_USERPFP_ID || '',
+                pfp,
+                100,
+                100,
+                'center',
+                100,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                "webp"
+            );
+            return pfpURL;
+        } else {
+            const avatar = avatars.getInitials(author.documents[0].username);
+            return avatar;
+        }
+    } catch (error) {
+        return error;
+    }
+};
+
+export const updateCurrent = async (id: string) => {
+    try {
+        let userPrefs = await account.getPrefs();
+        userPrefs.current = id;
+        const user = account.updatePrefs(userPrefs);
+        return user;
+    } catch (error) {
+        return error;
+    }
+};
+
 export const updateName = (name: string) => {
     try {
         const user = account.updateName(name);
@@ -76,9 +227,25 @@ export const updatePhone = (phone: string, id: string) => {
     }
 };
 
-export const createUser = (email: string, password: string, name: string) => {
+export const createUser = async (email: string, password: string, name: string) => {
     try {
         const user = account.create(ID.unique(), email, password, name);
+        account.createEmailSession(email, password);
+        account.updatePrefs({ "pfp": "null", "HC": "false" });
+        const newUser = await account.get();
+        await databases.createDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+            ID.unique(),
+            {
+                userId: newUser.$id,
+                username: name,
+                pfp: "",
+                Comments: [],
+                public: false,
+            }
+        );
+        account.deleteSession('current');
         return user;
     } catch (error) {
         return error;
@@ -89,6 +256,171 @@ export const loginUser = async (email: string, password: string) => {
     try {
         const user = await account.createEmailSession(email, password);
         return user;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getPublicUser = async () => {
+    try {
+        const realUser = await account.get();
+        const user = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+            [
+                Query.equal('userId', realUser.$id),
+            ]
+        );
+        return user.documents[0];
+    } catch (error) {
+        return error;
+    }
+};
+
+export const togglePublicUser = async () => {
+    try {
+        const realUser = await account.get();
+        const user = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+            [
+                Query.equal('userId', realUser.$id)
+            ]
+        );
+        await databases.updateDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+            user.documents[0].$id,
+            {
+                public: !user.documents[0].public,
+            }
+        );
+        return !user.documents[0].public;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const sendPasswordResetLoggedIn = async () => {
+    try {
+        const user = await account.get();
+        account.createRecovery(user.email, "http://localhost/password/reset");
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const postComment = async (postToId: string, comment: string, chapter: boolean) => {
+    try {
+        const user = await account.get();
+        const publicProfile = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+            [
+                Query.equal('userId', user.$id),
+            ]
+        );
+        if (chapter) {
+            const chapter = await databases.getDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || '',
+                postToId
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_COMMENTS_TABLE_ID || '',
+                ID.unique(),
+                {
+                    comment: comment,
+                    ChapterId: chapter.$id,
+                    ArtId: null,
+                    Owner: publicProfile.documents[0].$id,
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_CHAPTERSTATS_TABLE_ID || '',
+                chapter.ChapterStats.$id,
+                {
+                    Comments: chapter.ChapterStats.Comments + 1,
+                }
+            );
+        } else {
+            const art = await databases.getDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_ART_TABLE_ID || '',
+                postToId
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_COMMENTS_TABLE_ID || '',
+                ID.unique(),
+                {
+                    comment: comment,
+                    ChapterId: null,
+                    ArtId: art.$id,
+                    Owner: publicProfile.documents[0].$id,
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_ARTSTATS_TABLE_ID || '',
+                art.ArtStats.$id,
+                {
+                    Comments: art.ArtStats.Comments + 1,
+                }
+            );
+        }
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getCommentsByChapterId = async (chapterId: string) => {
+    try {
+        const comments = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_COMMENTS_TABLE_ID || '',
+            [
+                Query.equal('ChapterId', chapterId),
+                Query.orderDesc("$createdAt"),
+            ]
+        );
+        return comments;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getCommentsByArtId = async (artId: string) => {
+    try {
+        const comments = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_COMMENTS_TABLE_ID || '',
+            [
+                Query.equal('ArtId', artId),
+                Query.orderDesc("$createdAt"),
+            ]
+        );
+        return comments;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getCommentsByUserId = async (userId: string) => {
+    try {
+        const comments = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_COMMENTS_TABLE_ID || '',
+            [
+                Query.equal('Owner', userId),
+                Query.orderDesc("$createdAt"),
+            ]
+        );
+        return comments;
     } catch (error) {
         return error;
     }
@@ -549,6 +881,27 @@ export const giveArtView = async (artId: string) => {
             art.ArtStats.$id,
             {
                 Views: art.ArtStats.Views + 1,
+            }
+        );
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const removeArtView = async (artId: string) => {
+    try {
+        const art = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ART_TABLE_ID || '',
+            artId
+        );
+        await databases.updateDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_ARTSTATS_TABLE_ID || '',
+            art.ArtStats.$id,
+            {
+                Views: art.ArtStats.Views - 1,
             }
         );
         return true;

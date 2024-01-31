@@ -3,6 +3,7 @@ import { checkUserData, getArtImage, giveArtView, likeArtToggle, shareArt, getAr
 import { Art, LikesRequest } from '../../assets/types';
 import { calculateHowLongAgo } from '../../functions/CalculateHowLongAgo';
 import { Forward, Heart, HeartHandshake, MessageSquare } from 'lucide-react';
+import CommentViewH from '../commentViewH';
 
 const ArtView = () => {
     const artId = window.location.pathname.split("/")[2];
@@ -61,8 +62,8 @@ const ArtView = () => {
 
     const handleLikeing = async () => {
         if (isLoggedIn && userId) {
-            await likeArtToggle(art?.$id as string, userId);
             setLiked(!liked);
+            await likeArtToggle(art?.$id as string, userId);
         }
     }
 
@@ -85,29 +86,32 @@ const ArtView = () => {
     }
 
     return (
-        <div className='flex flex-col items-center justify-center w-full h-fullpage'>
+        <div className='flex flex-col items-center justify-center w-full gap-8 mt-8 mb-8 h-fit'>
             <div className='flex flex-row max-w-[900px] h-fit gap-2'>
                 {artImage && <img className='w-1/2 aspect-[2/3]' src={artImage.toString()} alt={art?.title} />}
                 <div className='w-1/2 h-full flex flex-col bg-[--secondary] relative aspect-[2/3] p-2'>
                     <h2 className='text-[--primaryText] font-bold text-lg mb-2'>{art?.title}</h2>
-                        <p className='text-[--primaryText] font-semibold text-md'>Description:</p>
-                        <hr className='border-[--primaryText]' />
-                        <p className='text-[--primaryText] font-medium text-sm grow w-full'>{art?.description}</p>
-                        <hr className='border-[--primaryText]' />
-                        <p className='text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
+                    <p className='text-[--primaryText] font-semibold text-md'>Description:</p>
+                    <hr className='border-[--primaryText]' />
+                    <p className='text-[--primaryText] font-medium text-sm grow w-full'>{art?.description}</p>
+                    <hr className='border-[--primaryText]' />
+                    <p className='text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
 
-                        <div className='absolute flex flex-row items-center justify-center gap-2 top-2 right-2'>
-                            {isLoggedIn && (
-                                liked ?
-                                    <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--accentText] h-fit rounded p-1`} onClick={handleLikeing}><HeartHandshake /></button>
-                                :
-                                    <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit rounded p-1`} onClick={handleLikeing}><Heart /></button>
-                                )
-                            }
-                            {isLoggedIn && <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit'><MessageSquare /></button>}
-                            <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit' onClick={handleShare}><Forward /></button>
-                        </div>
+                    <div className='absolute flex flex-row items-center justify-center gap-2 top-2 right-2'>
+                        {isLoggedIn && (
+                            liked ?
+                                <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--accentText] h-fit rounded p-1`} onClick={handleLikeing}><HeartHandshake /></button>
+                            :
+                                <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit rounded p-1`} onClick={handleLikeing}><Heart /></button>
+                            )
+                        }
+                        {isLoggedIn && <a href="#comments" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit'><MessageSquare /></a>}
+                        <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit' onClick={handleShare}><Forward /></button>
+                    </div>
                 </div>
+            </div>
+            <div className='w-full max-w-[1000px]' id='comments'>
+                <CommentViewH id={artId} loggedIn={isLoggedIn} chapterOrNot={false} />
             </div>
         </div>
     );

@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { getArtImagePreview, getArtImage, giveArtView, likeArtToggle, shareArt } from '../lib/Appwrite';
+import { getArtImagePreview, getArtImage, giveArtView, likeArtToggle, shareArt, removeArtView } from '../lib/Appwrite';
 import { Art } from '../assets/types';
 import { calculateHowLongAgo } from '../functions/CalculateHowLongAgo';
 import { Forward, Heart, HeartHandshake, MessageSquare, ExternalLink } from 'lucide-react';
+import { Drawer } from 'vaul';
+import CommentViewH from './commentViewH';
 
 const ArtViewH = ({ art, likedStatus, loggedIn, userId }: { art: Art, likedStatus: boolean, loggedIn: boolean, userId: string }) => {
     const [artImage, setArtImage] = useState<URL>();
@@ -37,8 +39,8 @@ const ArtViewH = ({ art, likedStatus, loggedIn, userId }: { art: Art, likedStatu
 
     const handleLikeing = async () => {
         if (loggedIn && userId) {
-            await likeArtToggle(art.$id, userId);
             setLiked(!liked);
+            await likeArtToggle(art.$id, userId);
         }
     }
 
@@ -68,40 +70,57 @@ const ArtViewH = ({ art, likedStatus, loggedIn, userId }: { art: Art, likedStatu
             await giveArtView(art.$id);
         }
     };
+
+    const removeView = () => {
+        removeArtView(art.$id);
+    }
     
     return (
-        <div className='w-full h-fit'>
-            <img src={artImagePreview?.href} alt="Art" className='w-full aspect-[2/3] cursor-pointer' onClick={handleModal} />
+        <Drawer.Root shouldScaleBackground>
+            <div className='w-full h-fit'>
+                <img src={artImagePreview?.href} alt="Art" className='w-full aspect-[2/3] cursor-pointer' onClick={handleModal} />
 
-            {modal && <div className='fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center w-full h-full bg-black/40' onClick={handleModal}></div>}
-            {modal &&
-            <div className='fixed top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full pointer-events-none'>
-                <div className='flex flex-row items-center justify-center gap-2 pointer-events-auto w-fit h-4/5'>
-                    <img src={artImage?.href} alt="Art" className='h-full aspect-[2/3]' />
-                    <div className='aspect-[2/3] h-full flex flex-col bg-[--secondary] p-2 relative'>
-                        <h2 className='text-[--primaryText] font-bold text-lg mb-2'>{art.title}</h2>
-                        <p className='text-[--primaryText] font-semibold text-md'>Description:</p>
-                        <hr className='border-[--primaryText]' />
-                        <p className='text-[--primaryText] font-medium text-sm grow w-full'>{art.description}</p>
-                        <hr className='border-[--primaryText]' />
-                        <p className='text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
+                {modal && <div className='fixed top-0 bottom-0 left-0 right-0 flex items-center justify-center w-full h-full bg-black/50' onClick={handleModal}></div>}
+                {modal &&
+                <div className='fixed top-0 bottom-0 left-0 right-0 z-10 flex items-center justify-center w-full h-full pointer-events-none'>
+                    <div className='flex flex-row items-center justify-center gap-2 pointer-events-auto w-fit h-4/5'>
+                        <img src={artImage?.href} alt="Art" className='h-full aspect-[2/3]' />
+                        <div className='aspect-[2/3] h-full flex flex-col bg-[--secondary] p-2 relative'>
+                            <h2 className='text-[--primaryText] font-bold text-lg mb-2'>{art.title}</h2>
+                            <p className='text-[--primaryText] font-semibold text-md'>Description:</p>
+                            <hr className='border-[--primaryText]' />
+                            <p className='text-[--primaryText] font-medium text-sm grow w-full'>{art.description}</p>
+                            <hr className='border-[--primaryText]' />
+                            <p className='text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
 
-                        <div className='absolute flex flex-row items-center justify-center gap-2 top-2 right-2'>
-                            {loggedIn && (
-                                liked ?
-                                    <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--accentText] h-fit rounded p-1`} onClick={handleLikeing}><HeartHandshake /></button>
-                                :
-                                    <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit rounded p-1`} onClick={handleLikeing}><Heart /></button>
-                                )
-                            }
-                            {loggedIn && <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit'><MessageSquare /></button>}
-                            <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit' onClick={handleShare}><Forward /></button>
-                            <a href={"/a/" + art.$id} target="_blank" rel="noreferrer" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit ml-2'><ExternalLink /></a>
+                            <div className='absolute flex flex-row items-center justify-center gap-2 top-2 right-2'>
+                                {loggedIn && (
+                                    liked ?
+                                        <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--accentText] h-fit rounded p-1`} onClick={handleLikeing}><HeartHandshake /></button>
+                                    :
+                                        <button type="button" className={`'flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit rounded p-1`} onClick={handleLikeing}><Heart /></button>
+                                    )
+                                }
+                                {loggedIn && <Drawer.Trigger type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit'><MessageSquare /></Drawer.Trigger>}
+                                <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit' onClick={handleShare}><Forward /></button>
+                                <a href={"/a/" + art.$id} target="_blank" rel="noreferrer" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit ml-2' onClick={removeView}><ExternalLink /></a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>}
-        </div>
+                </div>}
+            </div>
+            <Drawer.Portal>
+                <Drawer.Overlay className='fixed inset-0 z-40 bg-black/50' />
+                    <Drawer.Content className='bg-[--background] border-2 z-50 border-[--primary] flex flex-col items-center rounded-t-[10px] max-h-[65%] fixed bottom-0 left-0 right-0'>
+                        <div className="max-w-[1000px] w-full flex flex-col overflow-auto p-4 rounded-t-[10px]">
+                            <div className="mx-auto w-16 h-1.5 flex-shrink-0 rounded-full bg-zinc-300 mb-4" />
+                            <div className="w-full">
+                                <CommentViewH id={art.$id} loggedIn={loggedIn} chapterOrNot={false} />
+                            </div>
+                        </div>
+                    </Drawer.Content>
+            </Drawer.Portal>
+        </Drawer.Root>
     );
 };
 

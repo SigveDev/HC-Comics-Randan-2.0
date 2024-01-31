@@ -6,6 +6,7 @@ import { Art, Chapter, LikesRequest, Search as SearchType } from '../../assets/t
 import ChapterViewH from '../chapterViewH';
 import TitleViewH from '../titleViewH';
 import ArtViewH from '../artViewH';
+import AuthorViewH from '../authorViewH';
 
 const SearchPage = () => {
     const [searchResults, setSearchResults] = useState<SearchType>();
@@ -83,7 +84,7 @@ const SearchPage = () => {
                     </button>
                 </div>
             </div>
-            <div className={`grid w-full ${tabb === "chapters" ? "grid-cols-2" : tabb === "art" ? "grid-cols-6" : "grid-cols-3"} gap-2 pt-8 pb-8 pl-12 pr-12 h-fit`}>
+            <div className={`grid w-full ${tabb === "chapters" && "grid-cols-2"} ${tabb === "art" && "grid-cols-6"} ${tabb === "titles" && "grid-cols-3"} ${tabb === "authors" && "grid-cols-1"} gap-2 pt-8 pb-8 pl-12 pr-12 h-fit`}>
                 {tabb === "chapters" && searchResults?.chapters.map((chapter, index) => {
                     const likedStatus = likedChapters?.find((likedChapter: Chapter) => likedChapter.$id === chapter.$id) ? true : false;
                     return (
@@ -93,6 +94,13 @@ const SearchPage = () => {
                 {tabb === "titles" && searchResults?.titles.map((title, index) => {
                     return (
                         <TitleViewH title={title} key={index} />
+                    );
+                })}
+                {tabb === "authors" && searchResults?.authors.map((author, index) => {
+                    return (
+                        <div className='w-3/5 justify-self-center'>
+                            <AuthorViewH author={author} key={index} />
+                        </div>
                     );
                 })}
                 {tabb === "art" && searchResults?.art.map((post, index) => {
