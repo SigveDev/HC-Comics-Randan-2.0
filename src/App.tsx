@@ -20,6 +20,8 @@ import ArtPage from './components/pages/art';
 import ArtView from './components/pages/artView';
 import SearchPage from './components/pages/search';
 import Profile from './components/pages/profile';
+import SetNewPassword from './components/pages/setNewPassword';
+import VerifyEmailPage from './components/pages/verifyEmail';
 
 function App() {
   const [runOnce, setRunOnce] = useState<boolean>(false);
@@ -122,6 +124,9 @@ function App() {
             <Route path="/a/:artID" element={<ArtView />} />
 
             <Route path="/profile" element={user !== "error" ? <Profile /> : <Navigate to="/" />} />
+
+            <Route path="/password/reset" element={<SetNewPassword />} />
+            <Route path="/email/verify" element={<VerifyEmailPage />} />
 
             <Route path="/fallback/:jwt" element={<Fallback />} />
           </Routes>

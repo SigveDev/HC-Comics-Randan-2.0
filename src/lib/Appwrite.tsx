@@ -51,6 +51,34 @@ export const createHCUser = async (id: string, email: string, name: string) => {
                 public: false,
             }
         );
+        await databases.createDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
+            ID.unique(),
+            {
+                userId: id,
+                Chapters: [],
+                Art: [],
+            }
+        );
+        await databases.createDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+            ID.unique(),
+            {
+                userId: id,
+                Chapters: [],
+            }
+        );
+        await databases.createDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_HCUSERS_TABLE_ID || '',
+            ID.unique(),
+            {
+                email: email,
+                userId: id,
+            }
+        );
         account.deleteSession('current');
         return user;
     } catch (error) {
@@ -245,6 +273,25 @@ export const createUser = async (email: string, password: string, name: string) 
                 public: false,
             }
         );
+        await databases.createDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
+            ID.unique(),
+            {
+                userId: newUser.$id,
+                Chapters: [],
+                Art: [],
+            }
+        );
+        await databases.createDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+            ID.unique(),
+            {
+                userId: newUser.$id,
+                Chapters: [],
+            }
+        );
         account.deleteSession('current');
         return user;
     } catch (error) {
@@ -254,8 +301,19 @@ export const createUser = async (email: string, password: string, name: string) 
 
 export const loginUser = async (email: string, password: string) => {
     try {
-        const user = await account.createEmailSession(email, password);
-        return user;
+        const HCUser = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_HCUSERS_TABLE_ID || '',
+            [
+                Query.equal('email', email),
+            ]
+        );
+        if (HCUser.total === 0) {
+            const user = await account.createEmailSession(email, password);
+            return user;
+        } else {
+            return "HC";
+        }
     } catch (error) {
         return error;
     }
@@ -304,7 +362,43 @@ export const togglePublicUser = async () => {
 export const sendPasswordResetLoggedIn = async () => {
     try {
         const user = await account.get();
-        account.createRecovery(user.email, "http://localhost/password/reset");
+        account.createRecovery(user.email, "http://localhost:5173/password/reset");
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const sendPasswordReset = async (email: string) => {
+    try {
+        account.createRecovery(email, "http://localhost:5173/password/reset");
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const resetPassword = async (userId: string, secret: string, password: string, password2: string) => {
+    try {
+        account.updateRecovery(userId, secret, password, password2);
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const sendEmailVerification = async () => {
+    try {
+        account.createVerification("http://localhost:5173/email/verify");
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const verifyEmail = async (userId: string, secret: string) => {
+    try {
+        account.updateVerification(userId, secret);
         return true;
     } catch (error) {
         return error;

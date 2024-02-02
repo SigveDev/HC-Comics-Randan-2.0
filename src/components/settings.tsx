@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getUserPFP, updatePFP, updateName, sendPasswordResetLoggedIn, getPublicUser, togglePublicUser } from '../lib/Appwrite';
+import { getUserPFP, updatePFP, updateName, sendPasswordResetLoggedIn, sendEmailVerification, getPublicUser, togglePublicUser } from '../lib/Appwrite';
 import { User } from '../assets/types';
 import { Pencil } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
@@ -7,6 +7,8 @@ import { useDropzone } from 'react-dropzone';
 const Settings = (user: User) => {
     const [pfp, setPFP] = useState<string>();
     const [menu, setMenu] = useState<boolean>(false);
+    const [emailSent, setEmailSent] = useState<boolean>(false);
+    const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
     const [publicUser, setPublicUser] = useState<boolean>();
 
     const [tempPfp, setTempPfp] = useState<string>();
@@ -75,6 +77,16 @@ const Settings = (user: User) => {
         setPublicUser(!publicUser);
     }
 
+    const handleEmailSent = async () => {
+        await sendPasswordResetLoggedIn();
+        setEmailSent(true);
+    }
+
+    const handleVerifyEmail = async () => {
+        await sendEmailVerification();
+        setVerifyEmail(true);
+    }
+
     return (
         <div className='flex flex-col w-full col-span-2 gap-2 h-fit'>
             <p className='flex items-center justify-start h-7 pl-2 font-semibold text-lg text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Settings</p>
@@ -93,9 +105,12 @@ const Settings = (user: User) => {
                   <div className="w-11 h-6 peer-focus:outline-none rounded-full peer bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[--primary]"></div>
                 </label>
 
-                <button className='w-full h-8 bg-[--primary] text-[--primaryText] mt-4' onClick={() => sendPasswordResetLoggedIn()}>
+                {(user.prefs.HC === "false" && user.emailVerification) && <button className='w-full h-8 bg-[--primary] text-[--primaryText] mt-4' onClick={handleEmailSent}>
                     Change Password
-                </button>
+                </button>}
+                {(user.prefs.HC === "false" && !user.emailVerification) && <button className='w-full h-8 bg-[--primary] text-[--primaryText] mt-4' onClick={handleVerifyEmail}>
+                    Verify Email
+                </button>}
 
                 <button className='absolute w-6 h-6 top-4 right-2' onClick={() => setMenu(true)}>
                     <Pencil className='text-[--accentText]' />
@@ -126,6 +141,24 @@ const Settings = (user: User) => {
                             <button type='submit' className='flex items-center justify-center w-full h-7 font-semibold text-base text-[--primaryText] bg-[--primary] rounded-md'>Save</button>
                         </div>
                     </form>
+                </div>
+            </div>}
+
+            {emailSent && <div className='fixed inset-0 z-50 w-full h-full bg-black/50' onClick={() => setEmailSent(false)}></div>}
+            {emailSent && <div className='fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none'>
+                <p className='flex items-center justify-start w-1/3 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Email Sent</p>
+                <div className='flex flex-col w-1/3 h-fit bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4 gap-8'>
+                    <p className='w-full h-fit text-base text-[--primaryText]'>An email has been sent to <span className='font-bold'>{user.email}</span> with a link to reset your password.</p>
+                    <button className='flex items-center justify-center w-full h-7 font-semibold text-base text-[--primaryText] bg-[--primary] rounded-md' onClick={() => setEmailSent(false)}>Ok</button>
+                </div>
+            </div>}
+
+            {verifyEmail && <div className='fixed inset-0 z-50 w-full h-full bg-black/50' onClick={() => setVerifyEmail(false)}></div>}
+            {verifyEmail && <div className='fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none'>
+                <p className='flex items-center justify-start w-1/3 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Verify Email</p>
+                <div className='flex flex-col w-1/3 h-fit bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4 gap-8'>
+                    <p className='w-full h-fit text-base text-[--primaryText]'>An email has been sent to <span className='font-bold'>{user.email}</span> with a link to verify your email.</p>
+                    <button className='flex items-center justify-center w-full h-7 font-semibold text-base text-[--primaryText] bg-[--primary] rounded-md' onClick={() => setVerifyEmail(false)}>Ok</button>
                 </div>
             </div>}
         </div>

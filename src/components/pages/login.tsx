@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { account } from "../../lib/Appwrite";
+import { loginUser } from "../../lib/Appwrite";
 
 const Login = () => {
     const [email, setEmail] = useState<string>("");
@@ -8,9 +8,13 @@ const Login = () => {
 
     const handleSubmit = (e: any) => {
         e.preventDefault();
-        const res = account.createEmailSession(email, password);
-        res.then(() => {
-            window.location.href = "/";
+        const res = loginUser(email, password);
+        res.then((res: any) => {
+            if (res === "HC") {
+                alert("This email is used by HC Auth. Please login with HC Auth.");
+            } else {
+                window.location.href = "/";
+            }
         }).catch((err) => {
             console.log(err);
             setError("Invalid email or password");
