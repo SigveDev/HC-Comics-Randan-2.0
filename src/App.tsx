@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { checkUserData, updateEmail, updateName, updatePhone, getLatestChapter } from './lib/Appwrite';
+import { checkUserData, updateEmail, updateName, updatePhone, getLatestChapter, postChapterRetention } from './lib/Appwrite';
 import { ChapterRequest } from './assets/types';
 
 import DefaultLayout from './layouts/default';
@@ -89,6 +89,21 @@ function App() {
       });
     }
   }, []);
+
+  useEffect(() => {
+    const postRetention = async () => {
+      if (!window.location.pathname.includes('/p/')) {
+        const retention = localStorage.getItem('retention');
+        const chapterID = retention?.split('-')[0];
+        const page = retention?.split('-')[1];
+        if (chapterID && page) {
+          await postChapterRetention(chapterID, Number(page));
+          localStorage.removeItem('retention');
+        }
+      }
+    }
+    postRetention();
+  }, [window.location.pathname]);
 
   useEffect(() => {
     const setColors = async () => {

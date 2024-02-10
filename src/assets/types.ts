@@ -12,6 +12,7 @@ export type Chapter = {
     number: number;
     subtitle: string;
     ChapterStats: ChapterStats;
+    Retention: ChapterRetention;
 };
 export type ChapterRequest = {
     documents: Chapter[];
@@ -188,5 +189,23 @@ export type Comments = {
 
 export type CommentsRequest = {
     documents: Comments[];
+    total: number;
+}
+
+export type ChapterRetention = {
+    $id: string;
+    Chapter: Chapter;
+    readPagesList: number[];
+}
+
+export type History = {
+    $id: string;
+    $createdAt: Date;
+    $updatedAt: Date;
+    userId: string;
+    ChapterIds: string[];
+}
+export type HistoryRequest = {
+    documents: History[];
     total: number;
 }

@@ -520,6 +520,76 @@ export const getCommentsByUserId = async (userId: string) => {
     }
 };
 
+export const addChapterToHistory = async (chapterId: string) => {
+    try {
+        const user = await account.get();
+        const history = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+            [
+                Query.equal('userId', user.$id),
+            ]
+        );
+        const chapter = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || '',
+            chapterId
+        );
+        if (history.total === 0) {
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    ChapterIds: [chapter.$id],
+                }
+            );
+        } else {
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+                history.documents[0].$id,
+                {
+                    ChaptersIds: [...history.documents[0].ChapterIds, chapter.$id],
+                }
+            );
+        }
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getHistory = async () => {
+    try {
+        const user = await account.get();
+        const history = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+            [
+                Query.equal('userId', user.$id),
+            ]
+        );
+        if (history.total === 0) {
+            const newHistory = await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    ChapterIds: [],
+                }
+            );
+            return newHistory;
+        } else {
+            return history.documents[0];
+        }
+    } catch (error) {
+        return error;
+    }
+};
+
 export const getChapters = async (asc: boolean) => {
     try {
         if (asc) {
@@ -556,6 +626,53 @@ export const getChapterByID = async (id: string) => {
             id
         );
         return chapter;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const giveChapterView = async (id: string) => {
+    try {
+        const chapter = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || '',
+            id
+        );
+        await databases.updateDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_CHAPTERSTATS_TABLE_ID || '',
+            chapter.ChapterStats.$id,
+            {
+                Views: chapter.ChapterStats.Views + 1,
+            }
+        );
+        return true;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const postChapterRetention = async (id: string, readPages: number) => {
+    try {
+        const chapter = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || '',
+            id
+        );
+        const retention = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_RETENTION_TABLE_ID || '',
+            chapter.Retention.$id
+        );
+        await databases.updateDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_RETENTION_TABLE_ID || '',
+            chapter.Retention.$id,
+            {
+                readPagesList: [...retention.readPagesList, readPages],
+            }
+        );
+        return true;
     } catch (error) {
         return error;
     }
