@@ -105,10 +105,10 @@ const ChapterView = () => {
     return (
         <div className='flex flex-col w-full h-fit'>
             <div className="flex flex-col max-w-[1000px] w-full h-fit ml-auto mr-auto mt-12 mb-12 gap-12">
-                <div className="flex flex-row gap-4 h-fit">
-                    <div className='flex flex-col h-full gap-2'>
+                <div className="flex flex-col gap-4 px-2 xl:flex-row lg:flex-row lg:px-0 xl:px-0 h-fit">
+                    <a href={"/p/" + chapterID + "/1"} className='flex flex-col h-full gap-2'>
                         <div className='relative h-full w-fit'>
-                            {thumbnail && <img className='w-80 aspect-[2/3]' src={thumbnail.href} alt={chapter?.title} />}
+                            {thumbnail && <img className='xl:w-80 lg:w-80 w-full aspect-[2/3]' src={thumbnail.href} alt={chapter?.title} />}
                             <h3 className='absolute bottom-0 left-0 flex items-end justify-start w-full h-20 pb-4 pl-2 font-semibold text-[--primaryText] bg-gradient-to-t from-black to-transparent'>{chapter?.title}</h3>
                         </div>
                         <hr className='w-full' />
@@ -116,13 +116,12 @@ const ChapterView = () => {
                             <p className='text-lg font-bold text-[--primaryText]'>#{formatedNumber}</p>
                             <p className='text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
                         </div>
-                    </div>
+                    </a>
                     <div className='flex flex-col gap-2 grow bg-[--secondary]'>
                         <div className="flex flex-row w-full h-fit">
-                            <div className='flex flex-col w-full h-full m-4'>
+                            <div className='flex flex-col w-full h-full m-2 lg:m-4 xl:m-4'>
                                 <h2 className='text-2xl font-bold text-[--primaryText]'>{chapter?.title}</h2>
-                                <h3 className='mb-2 text-lg font-medium text-[--primaryText]'>#{formatedNumber}</h3>
-                                <p className='text-sm font-medium text-[--primaryText] text-ellipsis'>{chapter?.subtitle}</p>
+                                <h3 className='mb-2 text-lg font-medium text-[--primaryText]'>{chapter?.Titles.name}{" "}#{formatedNumber}</h3>
                                 <p className='mt-2 text-sm font-medium text-[--secondaryText]'>Posted {howLongAgo}</p>
                                 <a href={"/u/" + chapter?.Author.$id} className="flex flex-row items-center justify-start w-full h-12 gap-4 mt-2">
                                     <img className='w-12 h-12 rounded-full' src={authorPFP} alt={chapter?.Author.name} />
@@ -141,14 +140,14 @@ const ChapterView = () => {
                                 <button type="button" className='flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit' onClick={handleShare}><Forward /></button>
                             </div>
                         </div>
-                        <p className='flex flex-col w-full pl-4 text-[--primaryText] h-fit'>Descripton:</p>
-                        <hr className='w-auto mt-2 mb-1 ml-4 mr-4' />
-                        <p className="w-full h-full pb-4 pl-4 pr-4 text-[--primaryText] text-ellipsis">{chapter?.description}</p>
+                        <p className='flex flex-col w-full xl:pl-4 lg:pl-4 pl-2 text-[--primaryText] h-fit'>Descripton:</p>
+                        <hr className='w-auto mx-2 mt-2 mb-1 xl:mx-4 lg:mx-4' />
+                        <p className="w-full h-full xl:pb-4 lg:pb-4 pb-2 lg:px-4 xl:px-4 px-2 text-[--primaryText] text-ellipsis">{chapter?.description}</p>
                     </div>
                 </div>
-                <div className="flex flex-col items-center justify-center w-full gap-1 mb-4">
+                <div className="flex flex-col items-center justify-center w-full gap-1 px-2 mb-4 lg:px-0 xl:px-0">
                     <h3 className="text-lg font-bold text-[--primaryText]">Pages</h3>
-                    <div className="grid w-full grid-cols-4 gap-2 p-2 bg-[--secondary]">
+                    <div className="grid w-full xl:grid-cols-4 lg:grid-cols-4 grid-cols-2 gap-2 p-2 bg-[--secondary]">
                         {chapter?.pages.map((page: string, index: number) => {
                             return (
                                 <MiniPageView pageId={page} index={index} key={index} />
@@ -157,7 +156,7 @@ const ChapterView = () => {
                     </div>
                 </div>
             </div>
-            <div className='w-full max-w-[1000px] ml-auto mr-auto' id='comments'>
+            <div className='w-full max-w-[1000px] ml-auto mr-auto mb-6' id='comments'>
                 <CommentViewH id={chapterID} loggedIn={loggedIn} chapterOrNot={true} />
             </div>
         </div>

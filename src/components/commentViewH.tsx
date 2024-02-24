@@ -65,7 +65,7 @@ const CommentViewH = ({ id, loggedIn, chapterOrNot }: { id: string, loggedIn: bo
             {loggedIn && <div className='flex flex-row w-full gap-4 mb-4 h-fit'>
                 <img src={userPFP} alt="UserPfp" className='rounded-full w-14 h-14' />
                 <div className='grow h-fit'>
-                    <textarea className='w-full p-2 bg-[--background] border-b-2 border-[--primary] caret-[--primaryText] text-[--primaryText] outline-none resize-none overflow-hidden'
+                    <textarea className='w-full p-2 bg-[--background] border-b-2 border-[--primary] caret-[--primaryText] text-[--primaryText] outline-none resize-none overflow-hidden rounded-none'
                         placeholder='Comment something...'
                         onChange={handleChange}
                         ref={commentRef}
@@ -78,7 +78,7 @@ const CommentViewH = ({ id, loggedIn, chapterOrNot }: { id: string, loggedIn: bo
                     </div>
                 </div>
             </div>}
-            <div className='flex flex-col w-full gap-3 h-fit'>
+            <div className='flex flex-col w-full gap-4 h-fit'>
                 {commentList.length > 0 && commentList.map((commentData: Comments) => {
                     return <Comment commentData={commentData} publicUserId={publicUserId as string} key={commentData.$id} />
                 })}

@@ -34,13 +34,13 @@ const Register = () => {
 
     return (
         <div className="flex flex-col items-center justify-center w-full grow">
-            <div className="flex flex-col items-center justify-center w-1/3 h-1/2">
+            <div className="flex flex-col items-center justify-center w-2/3 xl:w-1/3 lg:w-1/3 h-1/2">
                 <form className="flex flex-col items-center justify-center w-full h-full gap-4" onSubmit={handleSubmit}>
                     <h1 className="text-xl text-[--primaryText]">Register</h1>
-                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none" type="password" placeholder="Confirm Password" value={password2} onChange={(e) => setPassword2(e.target.value)} />
+                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none rounded-none" type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
+                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none rounded-none" type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none rounded-none" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none rounded-none" type="password" placeholder="Confirm Password" value={password2} onChange={(e) => setPassword2(e.target.value)} />
                     {error && <p className="text-red-600">{error}</p>}
                     <a href="/login" className="text-[--primary]">Have a user?</a>
                     <button className="w-2/3 h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly]" type="submit">Register</button>

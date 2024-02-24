@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { getChapterByID, getPage, updateCurrent, giveChapterView, addChapterToHistory, getHistory, checkUserData } from '../../lib/Appwrite';
+import { getChapterByID, getPage, updateCurrent, giveChapterView, addChapterToHistory, getHistory } from '../../lib/Appwrite';
 import { useSwipeable } from 'react-swipeable';
 import { History } from '../../assets/types';
 
@@ -93,14 +93,17 @@ const PageView = () => {
 
     const handleSwipable = useSwipeable({
         onSwipedLeft: () => {
-            console.log(Number(page), maxPage);
             if (Number(page) !== maxPage) {
                 handleNextPage();
+            } else {
+                window.location.href = `/c/${chapterID}`;
             }
         },
         onSwipedRight: () => {
             if (Number(page) !== 1) {
                 handlePreviousPage();
+            } else {
+                window.location.href = `/c/${chapterID}`;
             }
         },
         onSwipedDown: () => {
@@ -111,10 +114,10 @@ const PageView = () => {
     return (
         <div className='relative flex items-center justify-center w-full h-fullpage'>
             {pageURL && 
-                <img {...handleSwipable} className='aspect-[2/3] xl:h-full lg:h-full md:h-full sm:h-fit xl:w-fit lg:w-fit md:w-fit sm:w-full z-10' src={pageURL.href} alt={pageURL.href} />
+                <img {...handleSwipable} className='aspect-[2/3] xl:h-full lg:h-full md:h-full sm:h-fit xl:w-fit lg:w-fit md:w-fit sm:w-full z-10 max-h-fullpage' src={pageURL.href} alt={pageURL.href} />
             }
-            {Number(page) !== 1 && <button className='flex justify-start items-center absolute top-0 left-0 w-1/2 h-full text-[--primaryText] hover:text-[--accentText]' onClick={handlePreviousPage}><ChevronLeft className='w-8 h-8' /></button>}
-            {Number(page) !== maxPage && <button className='flex justify-end items-center absolute top-0 right-0 w-1/2 h-full text-[--primaryText] hover:text-[--accentText]' onClick={handleNextPage}><ChevronRight className='w-8 h-8' /></button>}
+            {Number(page) !== 1 && <button className='xl:flex lg:flex hidden justify-start items-center absolute top-0 left-0 w-1/2 h-full text-[--primaryText] hover:text-[--accentText]' onClick={handlePreviousPage}><ChevronLeft className='w-8 h-8' /></button>}
+            {Number(page) !== maxPage && <button className='xl:flex lg:flex hidden justify-end items-center absolute top-0 right-0 w-1/2 h-full text-[--primaryText] hover:text-[--accentText]' onClick={handleNextPage}><ChevronRight className='w-8 h-8' /></button>}
         </div>
     );
 };

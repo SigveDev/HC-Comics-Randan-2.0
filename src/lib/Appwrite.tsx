@@ -36,51 +36,52 @@ export const loginHCUser = (email: string, password: string) => {
 
 export const createHCUser = async (id: string, email: string, name: string) => {
     try {
-        const user = account.create(id, email, id, name);
-        account.createEmailSession(email, id);
-        account.updatePrefs({ "pfp": "", "HC": "true" });
-        await databases.createDocument(
-            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
-            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
-            ID.unique(),
-            {
-                userId: id,
-                username: name,
-                pfp: "",
-                Comments: [],
-                public: false,
-            }
-        );
-        await databases.createDocument(
-            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
-            (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
-            ID.unique(),
-            {
-                userId: id,
-                Chapters: [],
-                Art: [],
-            }
-        );
-        await databases.createDocument(
-            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
-            (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
-            ID.unique(),
-            {
-                userId: id,
-                Chapters: [],
-            }
-        );
-        await databases.createDocument(
-            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
-            (import.meta as any).env.VITE_HCUSERS_TABLE_ID || '',
-            ID.unique(),
-            {
-                email: email,
-                userId: id,
-            }
-        );
-        account.deleteSession('current');
-        return user;
+        const user = await account.create(id, email, id, name);
+        setTimeout(async () => {
+            await account.createEmailSession(email, id);
+            await account.updatePrefs({ "pfp": "", "HC": "true", "current": "" });
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: id,
+                    username: name,
+                    pfp: "",
+                    public: true,
+                    Comments: [],
+                }
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: id,
+                    Chapters: [],
+                    Art: [],
+                }
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: id,
+                    ChapterIds: [],
+                }
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_HCUSERS_TABLE_ID || '',
+                ID.unique(),
+                {
+                    email: email,
+                    userId: id,
+                }
+            );
+            return user;
+        }, 1000);
     } catch (error) {
         return error;
     }
@@ -257,43 +258,43 @@ export const updatePhone = (phone: string, id: string) => {
 
 export const createUser = async (email: string, password: string, name: string) => {
     try {
-        const user = account.create(ID.unique(), email, password, name);
-        account.createEmailSession(email, password);
-        account.updatePrefs({ "pfp": "null", "HC": "false" });
-        const newUser = await account.get();
-        await databases.createDocument(
-            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
-            (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
-            ID.unique(),
-            {
-                userId: newUser.$id,
-                username: name,
-                pfp: "",
-                Comments: [],
-                public: false,
-            }
-        );
-        await databases.createDocument(
-            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
-            (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
-            ID.unique(),
-            {
-                userId: newUser.$id,
-                Chapters: [],
-                Art: [],
-            }
-        );
-        await databases.createDocument(
-            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
-            (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
-            ID.unique(),
-            {
-                userId: newUser.$id,
-                Chapters: [],
-            }
-        );
-        account.deleteSession('current');
-        return user;
+        const user = await account.create(ID.unique(), email, password, name);
+        setTimeout(async () => {
+            await account.createEmailSession(email, user.$id);
+            await account.updatePrefs({ "pfp": "", "HC": "false", "current": "" });
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    username: name,
+                    pfp: "",
+                    public: true,
+                    Comments: [],
+                }
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_LIKED_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    Chapters: [],
+                    Art: [],
+                }
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_HISTORY_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    ChapterIds: [],
+                }
+            );
+            return user;
+        }, 1000);
     } catch (error) {
         return error;
     }

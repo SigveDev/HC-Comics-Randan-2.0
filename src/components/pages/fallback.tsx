@@ -62,16 +62,10 @@ const Fallback = () => {
                 }).catch((err: any) => {
                     console.log(err);
                     const create = createHCUser(res.data.account.$id, res.data.account.email, res.data.account.name) as Promise<any>;
-                        create.then((res: any) => {
-                            const login = loginHCUser(res.data.account.email, res.data.account.$id) as Promise<any>;
-                            login.then(() => {
-                                setTimeout(() => {
-                                    window.location.href = '/';
-                                }, 1000);
-                            }).catch((err: any) => {
-                                console.log(err);
-                                window.location.href = '/login';
-                            });
+                        create.then(() => {
+                            setTimeout(() => {
+                                window.location.href = '/';
+                            }, 5000);
                         }).catch((err: any) => {
                             console.log(err);
                             window.location.href = '/login';

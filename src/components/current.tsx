@@ -31,7 +31,7 @@ const Current = (user: User) => {
     }, [chapter]);
 
     return (
-        <div className='flex flex-col w-full col-span-3 gap-2 h-fit'>
+        <div className='flex flex-col w-full col-span-1 gap-2 xl:col-span-3 lg:col-span-3 h-fit'>
             <p className='flex items-center justify-start h-7 pl-2 font-semibold text-lg text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Reading</p>
             {chapter && <ChapterViewH chapter={chapter} likedStatus={liked} loggedIn={true} userId={user.$id as string} />}
         </div>

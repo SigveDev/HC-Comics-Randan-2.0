@@ -21,7 +21,7 @@ const Profile = () => {
     }, []);
     
     return (
-        <div className="grid w-full h-full grid-cols-11 gap-4 pt-8 pb-8 pl-12 pr-12">
+        <div className="grid w-full h-full grid-cols-1 gap-4 px-4 py-8 xl:px-12 lg:px-12 xl:grid-cols-11 lg:grid-cols-11">
             {user && <Settings {...user} />}
             {user && <Current {...user} />}
             {user && <LikedView {...user} />}

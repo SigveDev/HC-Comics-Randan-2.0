@@ -17,14 +17,14 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="grid w-full gap-8 pt-8 pb-8 pl-12 pr-12 grow lg:grid-cols-8 md:grid-cols-6">
-            <div className="w-full col-span-2 h-fit">
+        <div className="grid w-full gap-8 px-4 pt-8 pb-8 xl:px-12 lg:px-12 grow lg:grid-cols-8 md:grid-cols-1 sm:grid-cols-1">
+            <div className="w-full lg:col-span-2 md:col-span-1 h-fit sm:col-span-1">
                 {chapters.length > 0 && <LatestRelease {...chapters[0]} />}
             </div>
-            <div className="w-full col-span-4 h-fit">
+            <div className="w-full lg:col-span-4 md:col-span-1 h-fit sm:col-span-1">
                 {chapters.length > 0 && <ChaptersList chapters={chapters.slice(1)} />}
             </div>
-            <div className="w-full col-span-2 h-fit">
+            <div className="w-full lg:col-span-2 md:col-span-1 h-fit sm:col-span-1">
                 <SocialsList />
             </div>
         </div>

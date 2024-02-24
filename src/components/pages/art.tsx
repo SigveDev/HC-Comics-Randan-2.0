@@ -43,8 +43,8 @@ const ArtPage = () => {
     }, [page]);
     
     return (
-        <div className="flex flex-col w-full h-full gap-4 pt-8 pb-8 pl-12 pr-12">
-            <div className="grid grid-cols-6 gap-2">
+        <div className="flex flex-col w-full h-full gap-4 px-4 py-8 xl:px-12 lg:px-12">
+            <div className="grid grid-cols-3 gap-2 xl:grid-cols-6 lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-3">
                 {artPosts.map((post: Art, index: number) => {
                     const likedStatus = likedArt.find((likedArt: Art) => likedArt.$id === post.$id) ? true : false;
                     return (

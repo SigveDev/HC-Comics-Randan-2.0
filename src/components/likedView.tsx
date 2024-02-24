@@ -17,7 +17,7 @@ const LikedView = (user: User) => {
     }, []);
 
     return (
-        <div className='flex flex-col w-full col-span-3 gap-2 h-fit'>
+        <div className='flex flex-col w-full col-span-1 gap-2 xl:col-span-3 lg:col-span-3 h-fit'>
             <p className='flex items-center justify-start h-7 pl-2 font-semibold text-lg text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Liked</p>
             <div className="flex flex-col w-full gap-2 h-fit">
                 {liked && liked.map((chapter: Chapter) => {

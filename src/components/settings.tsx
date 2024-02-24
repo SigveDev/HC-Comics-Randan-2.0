@@ -88,7 +88,7 @@ const Settings = (user: User) => {
     }
 
     return (
-        <div className='flex flex-col w-full col-span-2 gap-2 h-fit'>
+        <div className='flex flex-col w-full col-span-1 gap-2 xl:col-span-2 lg:col-span-2 h-fit'>
             <p className='flex items-center justify-start h-7 pl-2 font-semibold text-lg text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Settings</p>
             <div className='w-full h-fit flex flex-col pl-2 pr-2 pt-4 pb-4 gap-2 bg-[--secondary] relative'>
                 <div className='flex flex-row items-center justify-start w-full h-16'>
@@ -119,8 +119,8 @@ const Settings = (user: User) => {
 
             {menu && <div className='fixed inset-0 z-50 w-full h-full bg-black/50' onClick={() => setMenu(false)}></div>}
             {menu && <div className='fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none'>
-                <p className='flex items-center justify-start w-1/3 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Edit User</p>
-                <div className='flex flex-col w-1/3 h-fit bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4'>
+                <p className='flex items-center justify-start xl:w-1/3 lg:w-1/3 w-4/5 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent'>Edit User</p>
+                <div className='flex flex-col xl:w-1/3 lg:w-1/3 w-4/5 h-fit bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4'>
                     <div className='flex w-full h-32'>
                         {!tempPfp ? <div {...getRootProps()} className='flex flex-col items-center justify-center w-32 h-32 border-dashed border-2 border-[--primary] rounded-full cursor-pointer'>
                             <input {...getInputProps()} />
@@ -134,7 +134,7 @@ const Settings = (user: User) => {
                     <form className='flex flex-col w-full gap-4 mt-4 h-fit' onSubmit={handleSubmit}>
                         {user.prefs.HC === "false" && <div className='flex flex-col w-full h-fit'>
                             <label className='flex items-center justify-start w-full h-7 font-semibold text-base text-[--primaryText]'>Name</label>
-                            <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none border-2 border-dashed border-[--primary]" type="text" placeholder="Name" value={tempName} onChange={(e) => setTempName(e.target.value)} />
+                            <input className="w-full h-10 p-2 text-[--primaryText] bg-[--secondary] focus-visible:outline-none border-2 border-dashed border-[--primary] rounded-none" type="text" placeholder="Name" value={tempName} onChange={(e) => setTempName(e.target.value)} />
                         </div>}
                         <div className='flex items-center w-full gap-2 h-fit'>
                             <button type='button' className='flex items-center justify-center w-full h-7 font-semibold text-base text-[--primaryText] bg-red-600 rounded-md' onClick={() => {setMenu(false); setTempName(undefined); setTempPfp(undefined); setTempFile(undefined)}}>Cancel</button>

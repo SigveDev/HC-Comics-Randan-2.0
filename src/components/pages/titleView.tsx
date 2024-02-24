@@ -44,9 +44,9 @@ const TitleView = () => {
     }, [titleId]);
 
     return (
-        <div className='flex flex-col w-full h-full gap-4 pt-8 pb-8 pl-12 pr-12'>
+        <div className='flex flex-col w-full h-full gap-4 px-4 py-8 xl:px-12 lg:px-12'>
             <h1 className='flex items-center justify-start h-7 pl-2 font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent mb-1'>{title?.name}</h1>
-            <div className="grid w-full grid-cols-2 gap-2 h-fit">
+            <div className="grid w-full grid-cols-1 gap-2 xl:grid-cols-2 lg:grid-cols-2 h-fit">
                 {title?.Chapters.map((chapter, index) => {
                     const likedStatus = likedChapters.find((likedChapter: Chapter) => likedChapter.$id === chapter.$id) ? true : false;
                     return (
