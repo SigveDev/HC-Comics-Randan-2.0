@@ -1,4 +1,4 @@
-import { Art, Chapter, LikesRequest } from '@/assets/types';
+import { Art, Author, Chapter, FollowingRequest, LikesRequest, Title } from '@/assets/types';
 import { Client, Account, Databases, Storage, Query, ID, Avatars } from 'appwrite';
 
 const client = new Client();
@@ -60,6 +60,16 @@ export const createHCUser = async (id: string, email: string, name: string) => {
                     userId: id,
                     Chapters: [],
                     Art: [],
+                }
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: id,
+                    Authors: [],
+                    Titles: [],
                 }
             );
             await databases.createDocument(
@@ -169,8 +179,8 @@ export const getAuthorPFP = async (id: string) => {
             const pfpURL = storage.getFilePreview(
                 (import.meta as any).env.VITE_STORAGE_AUTHORPFP_ID || '',
                 pfp,
-                100,
-                100,
+                300,
+                300,
                 'center',
                 100,
                 undefined,
@@ -282,6 +292,16 @@ export const createUser = async (email: string, password: string, name: string) 
                     userId: user.$id,
                     Chapters: [],
                     Art: [],
+                }
+            );
+            await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: user.$id,
+                    Authors: [],
+                    Titles: [],
                 }
             );
             await databases.createDocument(
@@ -1122,6 +1142,19 @@ export const removeArtView = async (artId: string) => {
     }
 };
 
+export const getAuthorById = async (id: string) => {
+    try {
+        const author = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_AUTHORS_TABLE_ID || '',
+            id
+        );
+        return author;
+    } catch (error) {
+        return error;
+    }
+};
+
 export const getSearchResults = async (query: string) => {
     try {
         const searchResults = await databases.listDocuments(
@@ -1158,6 +1191,141 @@ export const getSearchResults = async (query: string) => {
         );
         const all = { chapters: searchResults.documents, titles: titlesResults.documents, authors: authorsResults.documents, art: artResults.documents };
         return all;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getFollowing = async (userId: string) => {
+    try {
+        const following = await databases.listDocuments(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+            [
+                Query.equal('userId', userId),
+            ]
+        );
+        if (following.total === 0) {
+            const newFollowing = await databases.createDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+                ID.unique(),
+                {
+                    userId: userId,
+                    Authors: [],
+                    Titles: [],
+                }
+            );
+            return newFollowing;
+        } else {
+            return following;
+        }
+    } catch (error) {
+        return error;
+    }
+};
+
+export const followAuthorToggle = async (authorId: string, userId: string) => {
+    try {
+        const following: FollowingRequest = await getFollowing(userId) as FollowingRequest;
+        const followingAuthor = following.documents[0].Authors.find((author: Author) => author.$id === authorId);
+
+        const author: Author = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_AUTHORS_TABLE_ID || '',
+            authorId
+        ) as unknown as Author;
+
+        if (followingAuthor) {
+            const newFollowing = await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+                following.documents[0].$id,
+                {
+                    Authors: following.documents[0].Authors.filter((author: Author) => author.$id !== authorId),
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_AUTHORSTATS_TABLE_ID || '',
+                author.AuthorStats.$id,
+                {
+                    Followers: author.AuthorStats.Followers - 1,
+                }
+            );
+            return newFollowing;
+        } else {
+            const newFollowing = await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+                following.documents[0].$id,
+                {
+                    Authors: [...following.documents[0].Authors, author],
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_AUTHORSTATS_TABLE_ID || '',
+                author.AuthorStats.$id,
+                {
+                    Followers: author.AuthorStats.Followers + 1,
+                }
+            );
+            return newFollowing;
+        }
+    } catch (error) {
+        return error;
+    }
+};
+
+export const followTitleToggle = async (titleId: string, userId: string) => {
+    try {
+        const following: FollowingRequest = await getFollowing(userId) as FollowingRequest;
+        const followingTitle = following.documents[0].Titles.find((title: Title) => title.$id === titleId);
+
+        const title: Title = await databases.getDocument(
+            (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+            (import.meta as any).env.VITE_TITLES_TABLE_ID || '',
+            titleId
+        ) as unknown as Title;
+
+        if (followingTitle) {
+            const newFollowing = await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+                following.documents[0].$id,
+                {
+                    Titles: following.documents[0].Titles.filter((title: Title) => title.$id !== titleId),
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_TITLESTATS_TABLE_ID || '',
+                title.TitleStats.$id,
+                {
+                    Followers: title.TitleStats.Followers - 1,
+                }
+            );
+            return newFollowing;
+        } else {
+            const newFollowing = await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || '',
+                following.documents[0].$id,
+                {
+                    Titles: [...following.documents[0].Titles, title],
+                }
+            );
+            await databases.updateDocument(
+                (import.meta as any).env.VITE_HC_COMIC_DB_ID || '',
+                (import.meta as any).env.VITE_TITLESTATS_TABLE_ID || '',
+                title.TitleStats.$id,
+                {
+                    Followers: title.TitleStats.Followers + 1,
+                }
+            );
+            return newFollowing;
+        }
     } catch (error) {
         return error;
     }

@@ -22,6 +22,7 @@ import SearchPage from './components/pages/search';
 import Profile from './components/pages/profile';
 import SetNewPassword from './components/pages/setNewPassword';
 import VerifyEmailPage from './components/pages/verifyEmail';
+import AuthorPage from './components/pages/authorPage';
 
 function App() {
   const [runOnce, setRunOnce] = useState<boolean>(false);
@@ -137,6 +138,7 @@ function App() {
             <Route path="/t/:titleID" element={<TitleView />} />
             <Route path="/p/:chapterID/:pageID" element={<PageView />} />
             <Route path="/a/:artID" element={<ArtView />} />
+            <Route path="/u/:authorID" element={<AuthorPage />} />
 
             <Route path="/profile" element={user !== "error" ? <Profile /> : <Navigate to="/" />} />
 

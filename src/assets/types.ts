@@ -41,11 +41,22 @@ export type Author = {
     pfp: string;
     Chapters: Chapter[];
     Titles: Title[];
-    Followers: number;
     Art: Art[];
+    AuthorStats: AuthorStats;
 };
 export type AuthorRequest = {
     documents: Author[];
+    total: number;
+};
+
+export type AuthorStats = {
+    $id: string;
+    Author: Author;
+    Followers: number;
+};
+
+export type AuthorStatsRequest = {
+    documents: AuthorStats[];
     total: number;
 };
 
@@ -57,11 +68,22 @@ export type Title = {
     description: string;
     Author: Author;
     Chapters: Chapter[];
-    Followers: number;
     thumbnail: string;
+    TitleStats: TitleStats;
 };
 export type TitleRequest = {
     documents: Title[];
+    total: number;
+};
+
+export type TitleStats = {
+    $id: string;
+    Title: Title;
+    Followers: number;
+};
+
+export type TitleStatsRequest = {
+    documents: TitleStats[];
     total: number;
 };
 
@@ -207,5 +229,19 @@ export type History = {
 }
 export type HistoryRequest = {
     documents: History[];
+    total: number;
+}
+
+export type Following = {
+    $id: string;
+    $createdAt: Date;
+    $updatedAt: Date;
+    userId: string;
+    Authors: Author[];
+    Titles: Title[];
+}
+
+export type FollowingRequest = {
+    documents: Following[];
     total: number;
 }
