@@ -10,7 +10,6 @@ const AuthorPage = () => {
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const [userId, setUserId] = useState<string>();
     const [author, setAuthor] = useState<Author>();
-    const [followersList , setFollowersList] = useState<Following>();
     const [followStatus, setFollowStatus] = useState<boolean>();
     const [authorPFP, setAuthorPFP] = useState<string>();
     const [titles, setTitles] = useState<Title[]>([]);
@@ -31,7 +30,6 @@ const AuthorPage = () => {
             setLikedArt(likedArt.documents[0].Art as Art[]);
 
             const followersList: FollowingRequest = await getFollowing(user.$id) as FollowingRequest;
-            setFollowersList(followersList.documents[0] as Following);
             if (followersList.documents[0].Authors.find((author: Author) => author.$id === authorID)) {
                 setFollowStatus(true);
             } else {

@@ -8,7 +8,6 @@ const TitleView = () => {
     const titleId = window.location.pathname.split("/")[2];
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
     const [userId, setUserId] = useState<string>();
-    const [followersList , setFollowersList] = useState<Following>();
     const [followStatus, setFollowStatus] = useState<boolean>();
     const [likedChapters, setLikedChapters] = useState<Chapter[]>([]);
     const [title, setTitle] = useState<Title>();
@@ -26,7 +25,6 @@ const TitleView = () => {
             setLikedChapters(likedArt.documents[0].Chapters as Chapter[]);
 
             const followersList: FollowingRequest = await getFollowing(user.$id) as FollowingRequest;
-            setFollowersList(followersList.documents[0] as Following);
             if (followersList.documents[0].Titles.find((title: Title) => title.$id === titleId)) {
                 setFollowStatus(true);
             } else {
