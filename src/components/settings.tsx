@@ -94,12 +94,12 @@ const Settings = (user: User) => {
   };
 
   return (
-    <div className="flex flex-col w-full col-span-1 gap-2 xl:col-span-2 lg:col-span-2 h-fit">
+    <div className="flex flex-col col-span-1 gap-2 w-full xl:col-span-2 lg:col-span-2 h-fit">
       <p className="flex items-center justify-start h-7 pl-2 font-semibold text-lg text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
         Settings
       </p>
       <div className="w-full h-fit flex flex-col pl-2 pr-2 pt-4 pb-4 gap-2 bg-[--secondary] relative">
-        <div className="flex flex-row items-center justify-start w-full h-16">
+        <div className="flex flex-row justify-start items-center w-full h-16">
           {pfp && (
             <img
               className="w-16 h-16 rounded-full"
@@ -124,7 +124,7 @@ const Settings = (user: User) => {
         <p className="text-[--primaryText] font-semibold mt-2">
           Public profile:
         </p>
-        <label className="relative inline-flex items-center ml-2 cursor-pointer w-fit">
+        <label className="inline-flex relative items-center ml-2 cursor-pointer w-fit">
           <input
             type="checkbox"
             value=""
@@ -153,7 +153,7 @@ const Settings = (user: User) => {
         )}
 
         <button
-          className="absolute w-6 h-6 top-4 right-2"
+          className="absolute right-2 top-4 w-6 h-6"
           onClick={() => setMenu(true)}
         >
           <Pencil className="text-[--accentText]" />
@@ -162,12 +162,12 @@ const Settings = (user: User) => {
 
       {menu && (
         <div
-          className="fixed inset-0 z-50 w-full h-full bg-black/50"
+          className="fixed inset-0 z-40 w-full h-full bg-black/50"
           onClick={() => setMenu(false)}
         ></div>
       )}
       {menu && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none">
+        <div className="flex fixed inset-0 z-50 flex-col gap-2 justify-center items-center w-full h-full pointer-events-none">
           <p className="flex items-center justify-start xl:w-1/3 lg:w-1/3 w-4/5 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
             Edit User
           </p>
@@ -185,7 +185,7 @@ const Settings = (user: User) => {
                 </div>
               ) : (
                 <div
-                  className="flex items-center justify-center w-32 h-32"
+                  className="flex justify-center items-center w-32 h-32"
                   onClick={() => setTempPfp(undefined)}
                 >
                   <img
@@ -197,7 +197,7 @@ const Settings = (user: User) => {
               )}
             </div>
             <form
-              className="flex flex-col w-full gap-4 mt-4 h-fit"
+              className="flex flex-col gap-4 mt-4 w-full h-fit"
               onSubmit={handleSubmit}
             >
               {user.prefs.HC === "false" && (
@@ -214,7 +214,7 @@ const Settings = (user: User) => {
                   />
                 </div>
               )}
-              <div className="flex items-center w-full gap-2 h-fit">
+              <div className="flex gap-2 items-center w-full h-fit">
                 <button
                   type="button"
                   className="flex items-center justify-center w-full h-7 font-semibold text-base text-[--primaryText] bg-red-600 rounded-md"
@@ -241,12 +241,12 @@ const Settings = (user: User) => {
 
       {emailSent && (
         <div
-          className="fixed inset-0 z-50 w-full h-full bg-black/50"
+          className="fixed inset-0 z-40 w-full h-full bg-black/50"
           onClick={() => setEmailSent(false)}
         ></div>
       )}
       {emailSent && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none">
+        <div className="flex fixed inset-0 z-50 flex-col gap-2 justify-center items-center w-full h-full pointer-events-none">
           <p className="flex items-center justify-start w-1/3 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
             Email Sent
           </p>
@@ -268,12 +268,12 @@ const Settings = (user: User) => {
 
       {verifyEmail && (
         <div
-          className="fixed inset-0 z-50 w-full h-full bg-black/50"
+          className="fixed inset-0 z-40 w-full h-full bg-black/50"
           onClick={() => setVerifyEmail(false)}
         ></div>
       )}
       {verifyEmail && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none">
+        <div className="flex fixed inset-0 z-50 flex-col gap-2 justify-center items-center w-full h-full pointer-events-none">
           <p className="flex items-center justify-start w-1/3 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
             Verify Email
           </p>

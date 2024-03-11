@@ -5,18 +5,24 @@ import {
   Title,
 } from "../../assets/types";
 import useAutosizeTextArea from "../../functions/useAutosizeTextArea";
-import { getMyTitles, getColorPalattes } from "../../lib/Appwrite";
+import {
+  getMyTitles,
+  getColorPalattes,
+  getMyThumbnails,
+} from "../../lib/Appwrite";
 import { Plus } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const ChapterForm = () => {
-  const [title, setTitle] = useState<string>("");
+  const [thumbnails, setThumbnails] = useState<string[]>([]);
   const [existingTitles, setExistingTitles] = useState<Title[]>([]);
   const [colorPalettes, setColorPalettes] = useState<ColorPalette[]>([]);
+
+  const [title, setTitle] = useState<string>("");
   const [chosenTitle, setChosenTitle] = useState<string>();
   const [titleIndex, setChapterIndex] = useState<number>();
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription] = useState<string>("");
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   const [chooseThumbnail, setChooseThumbnail] = useState<boolean>(false);
 
@@ -35,6 +41,14 @@ const ChapterForm = () => {
       setColorPalettes(colorPalettes.documents as ColorPalette[]);
     };
     fetchColorPalettes();
+  }, []);
+
+  useEffect(() => {
+    const fetchThumbnails = async () => {
+      const tempThumbnails = await getMyThumbnails();
+      setThumbnails(tempThumbnails as string[]);
+    };
+    fetchThumbnails();
   }, []);
 
   useEffect(() => {
@@ -65,7 +79,7 @@ const ChapterForm = () => {
   return (
     <div className="flex flex-col w-full h-fit">
       <form
-        className="flex flex-col items-center justify-center w-4/5 gap-4 mx-auto mt-8 h-fit"
+        className="flex flex-col gap-4 justify-center items-center mx-auto mt-8 w-4/5 h-fit"
         onSubmit={handleSubmit}
       >
         <div className="w-full h-fit">
@@ -116,7 +130,7 @@ const ChapterForm = () => {
             </button>
           </div>
         </div>
-        <div className="flex flex-row w-full gap-2 h-fit">
+        <div className="flex flex-row gap-2 w-full h-fit">
           <div className="grow h-fit">
             <label
               className="text-sm font-semibold text-[--primaryText]"
@@ -179,7 +193,7 @@ const ChapterForm = () => {
         <h2 className="text-2xl font-bold text-[--primaryText]">
           Advanced settings:
         </h2>
-        <div className="flex flex-row w-full gap-4 h-fit">
+        <div className="flex flex-row gap-4 w-full h-fit">
           <div className="flex flex-col w-1/3 h-fit">
             <label
               className="text-sm font-semibold text-[--primaryText]"
@@ -221,12 +235,21 @@ const ChapterForm = () => {
         </button>
       </form>
 
-      {chooseThumbnail && <div className="flex flex-col w-4/5 h-4/5"></div>}
       {chooseThumbnail && (
         <div
-          className="fixed inset-0 z-50 w-full h-full bg-black/50"
+          className="fixed inset-0 z-40 w-full h-full bg-black/50"
           onClick={() => setChooseThumbnail(false)}
         ></div>
+      )}
+      {chooseThumbnail && (
+        <div className="flex fixed inset-0 z-50 flex-col gap-2 justify-center items-center w-full h-full pointer-events-none">
+          <p className="flex items-center justify-start xl:w-1/3 lg:w-1/3 w-4/5 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
+            Choose thumbnail:
+          </p>
+          <div className="flex flex-col w-4/5 h-fit bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4">
+            {}
+          </div>
+        </div>
       )}
     </div>
   );
