@@ -28,7 +28,7 @@ const AuthorPage = () => {
   const [titles, setTitles] = useState<Title[]>([]);
   const [arts, setArts] = useState<Art[]>([]);
   const [likedArt, setLikedArt] = useState<Art[]>([]);
-  const [tabb, setTabb] = useState<string>("chapters");
+  const [tabb, setTabb] = useState<string>("titles");
 
   useEffect(() => {
     const fetchLoggedInUserInfo = async () => {
@@ -122,10 +122,10 @@ const AuthorPage = () => {
             </h2>
             <div className="flex flex-row w-full gap-2">
               <button
-                className={`flex flex-row items-center bg-[--secondary] justify-center w-full h-12 text-lg font-semibold text-[--primaryText] outline-none ${tabb === "chapters" ? "border-2 border-[--accentText]" : ""}`}
-                onClick={() => setTabb("chapters")}
+                className={`flex flex-row items-center bg-[--secondary] justify-center w-full h-12 text-lg font-semibold text-[--primaryText] outline-none ${tabb === "titles" ? "border-2 border-[--accentText]" : ""}`}
+                onClick={() => setTabb("titles")}
               >
-                Chapters
+                Titles
               </button>
               <button
                 className={`flex flex-row items-center bg-[--secondary] justify-center w-full h-12 text-lg font-semibold text-[--primaryText] outline-none ${tabb === "art" ? "border-2 border-[--accentText]" : ""}`}
@@ -137,7 +137,7 @@ const AuthorPage = () => {
           </div>
         </div>
       </div>
-      {tabb === "chapters" ? (
+      {tabb === "titles" ? (
         <div className="grid w-full h-full grid-cols-1 gap-12 px-4 py-8 xl:px-12 lg:px-12 xl:grid-cols-3 lg:grid-cols-3">
           {titles?.map((title, index) => {
             return <TitleViewH title={title} key={index} />;

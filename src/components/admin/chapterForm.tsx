@@ -9,22 +9,30 @@ import {
   getMyTitles,
   getColorPalattes,
   getMyThumbnails,
+  getMyPages,
+  createChapter,
 } from "../../lib/Appwrite";
 import { Plus } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const ChapterForm = () => {
   const [thumbnails, setThumbnails] = useState<string[]>([]);
+  const [pages, setPages] = useState<string[]>([]);
   const [existingTitles, setExistingTitles] = useState<Title[]>([]);
   const [colorPalettes, setColorPalettes] = useState<ColorPalette[]>([]);
 
   const [title, setTitle] = useState<string>("");
+  const [chosenThumbnail, setChosenThumbnail] = useState<string>();
+  const [chosenPages, setChosenPages] = useState<string[]>([]);
   const [chosenTitle, setChosenTitle] = useState<string>();
   const [titleIndex, setChapterIndex] = useState<number>();
   const [description, setDescription] = useState<string>("");
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+  const [chosenColorPalette, setChosenColorPalette] = useState<string>();
+  const [subtitle, setSubtitle] = useState<string>("");
 
   const [chooseThumbnail, setChooseThumbnail] = useState<boolean>(false);
+  const [choosePages, setChoosePages] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTitles = async () => {
@@ -52,6 +60,14 @@ const ChapterForm = () => {
   }, []);
 
   useEffect(() => {
+    const fetchPages = async () => {
+      const tempPages = await getMyPages();
+      setPages(tempPages as string[]);
+    };
+    fetchPages();
+  }, []);
+
+  useEffect(() => {
     if (chosenTitle !== "default") {
       const title = existingTitles.find((title) => title.$id === chosenTitle);
       const existingChapters = title?.Chapters.length;
@@ -71,15 +87,46 @@ const ChapterForm = () => {
 
   useAutosizeTextArea(descriptionRef.current, description);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(title);
+    console.log({
+      title,
+      chosenThumbnail,
+      chosenPages,
+      chosenTitle,
+      titleIndex,
+      description,
+      chosenColorPalette,
+      subtitle,
+    });
+    if (
+      title &&
+      chosenThumbnail &&
+      chosenPages.length > 0 &&
+      chosenTitle &&
+      titleIndex &&
+      description &&
+      chosenColorPalette &&
+      subtitle
+    ) {
+      await createChapter(
+        title,
+        chosenThumbnail,
+        chosenPages,
+        chosenTitle,
+        titleIndex,
+        description,
+        chosenColorPalette,
+        subtitle
+      );
+      window.location.reload();
+    }
   };
 
   return (
     <div className="flex flex-col w-full h-fit">
       <form
-        className="flex flex-col gap-4 justify-center items-center mx-auto mt-8 w-4/5 h-fit"
+        className="flex flex-col items-center justify-center w-4/5 gap-4 mx-auto mt-8 h-fit"
         onSubmit={handleSubmit}
       >
         <div className="w-full h-fit">
@@ -106,13 +153,32 @@ const ChapterForm = () => {
             >
               Thumbnail:
             </label>
-            <button
-              name="thumbnail"
-              className="border-[--primary] border-2 bg-[--background] h-64 aspect-[2/3] text-[--secondaryText] text-lg"
-              onClick={() => setChooseThumbnail(!chooseThumbnail)}
-            >
-              Thumbnail
-            </button>
+            {chosenThumbnail === undefined ? (
+              <button
+                name="thumbnail"
+                className="border-[--primary] border-2 bg-[--background] h-64 aspect-[2/3] text-[--secondaryText] text-lg"
+                onClick={() => setChooseThumbnail(true)}
+                type="button"
+              >
+                Thumbnail
+              </button>
+            ) : (
+              <button
+                className="h-64 aspect-[2/3]"
+                onClick={() => {
+                  setChooseThumbnail(true);
+                }}
+                type="button"
+              >
+                <img
+                  src={thumbnails.find((thumbnail) =>
+                    String(thumbnail).includes(chosenThumbnail)
+                  )}
+                  alt="thumbnail"
+                  className="w-64 h-64"
+                />
+              </button>
+            )}
           </div>
           <div className="flex flex-col items-end w-48 h-fit">
             <label
@@ -121,16 +187,52 @@ const ChapterForm = () => {
             >
               Add pages:
             </label>
-            <button
-              name="pages"
-              className="relative border-[--primary] border-2 bg-[--background] h-64 aspect-[2/3] w-fit text-[--secondaryText] flex flx-col justify-center items-center"
-            >
-              <div className="absolute h-full w-6 top-0 left-[-1.5rem] border-y-2 border-l-2 border-[--primary]"></div>
-              <Plus size={32} />
-            </button>
+            {chosenPages.length <= 0 ? (
+              <button
+                name="pages"
+                className="relative border-[--primary] border-2 bg-[--background] h-64 aspect-[2/3] w-fit text-[--secondaryText] flex flx-col justify-center items-center"
+                onClick={() => setChoosePages(true)}
+                type="button"
+              >
+                <div className="absolute h-full w-6 top-0 left-[-1.5rem] flex flex-col justify-center">
+                  <div className="h-[95%] w-6 border-y-2 border-l-2 border-[--primary]"></div>
+                </div>
+                <Plus size={32} />
+              </button>
+            ) : (
+              <button
+                name="pages"
+                className="h-64 aspect-[2/3] w-fit relative flex justify-center items-center"
+                onClick={() => setChoosePages(true)}
+                type="button"
+              >
+                {chosenPages.length > 1 ? (
+                  <div className="w-6 h-full flex justify-center flex-col top-0 left-[-1.5rem] absolute my-auto bg-black">
+                    <img
+                      src={pages.find((page) =>
+                        String(page).includes(chosenPages[1])
+                      )}
+                      alt="page 2"
+                      className="object-cover w-6 h-[95%] opacity-40"
+                    />
+                  </div>
+                ) : (
+                  <div className="absolute h-full w-6 top-0 left-[-1.5rem] flex flex-col justify-center">
+                    <div className="h-[95%] w-6 border-y-2 border-l-2 border-[--primary]"></div>
+                  </div>
+                )}
+                <img
+                  src={pages.find((thumbnail) =>
+                    String(thumbnail).includes(chosenPages[0])
+                  )}
+                  alt="thumbnail"
+                  className="w-full h-full"
+                />
+              </button>
+            )}
           </div>
         </div>
-        <div className="flex flex-row gap-2 w-full h-fit">
+        <div className="flex flex-row w-full gap-2 h-fit">
           <div className="grow h-fit">
             <label
               className="text-sm font-semibold text-[--primaryText]"
@@ -193,7 +295,7 @@ const ChapterForm = () => {
         <h2 className="text-2xl font-bold text-[--primaryText]">
           Advanced settings:
         </h2>
-        <div className="flex flex-row gap-4 w-full h-fit">
+        <div className="flex flex-row w-full gap-4 h-fit">
           <div className="flex flex-col w-1/3 h-fit">
             <label
               className="text-sm font-semibold text-[--primaryText]"
@@ -204,6 +306,8 @@ const ChapterForm = () => {
             <select
               name="colorPalette"
               className="w-full h-10 p-2 text-[--primaryText] bg-[--background] border-[--primary] border-2 focus-visible:outline-none rounded-none"
+              value={chosenColorPalette}
+              onChange={(e) => setChosenColorPalette(e.target.value)}
             >
               {colorPalettes.map((palette, index) => (
                 <option key={index} value={palette.$id}>
@@ -224,6 +328,8 @@ const ChapterForm = () => {
               className="w-full h-10 p-2 text-[--primaryText] bg-[--background] border-[--primary] border-2 focus-visible:outline-none rounded-none"
               type="text"
               placeholder="Subtitle"
+              value={subtitle}
+              onChange={(e) => setSubtitle(e.target.value)}
             />
           </div>
         </div>
@@ -242,12 +348,105 @@ const ChapterForm = () => {
         ></div>
       )}
       {chooseThumbnail && (
-        <div className="flex fixed inset-0 z-50 flex-col gap-2 justify-center items-center w-full h-full pointer-events-none">
-          <p className="flex items-center justify-start xl:w-1/3 lg:w-1/3 w-4/5 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none">
+          <p className="flex items-center justify-start w-4/5 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
             Choose thumbnail:
           </p>
-          <div className="flex flex-col w-4/5 h-fit bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4">
-            {}
+          <div className="grid gap-2 xl:grid-cols-5 lg:grid-cols-5 grid-cols-2 w-4/5 h-[calc(80%_-_2.5rem)] overflow-y-scroll bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4 ">
+            {thumbnails.map((thumbnail, index) => {
+              const thumbnailId = String(thumbnail).split("/")[8];
+              const isSelected = thumbnailId === chosenThumbnail;
+              return (
+                <button
+                  key={index}
+                  className="w-full aspect-[2/3] relative"
+                  onClick={() => {
+                    setChosenThumbnail(thumbnailId);
+                  }}
+                  type="button"
+                >
+                  <img
+                    src={thumbnail}
+                    alt="thumbnail"
+                    className="w-full h-full"
+                  />
+                  {isSelected && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                      <p className="text-3xl text-[--primaryText]">✓</p>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex justify-center w-4/5 h-10 pointer-events-auto">
+            <button
+              className="w-2/3 h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly] cursor-pointer"
+              onClick={() => setChooseThumbnail(false)}
+              type="button"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
+
+      {choosePages && (
+        <div
+          className="fixed inset-0 z-40 w-full h-full bg-black/50"
+          onClick={() => setChoosePages(false)}
+        ></div>
+      )}
+      {choosePages && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center w-full h-full gap-2 pointer-events-none">
+          <p className="flex items-center justify-start w-4/5 h-7 pl-2 font-semibold text-2xl text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
+            Choose thumbnail:
+          </p>
+          <div className="grid gap-2 xl:grid-cols-5 lg:grid-cols-5 grid-cols-2 w-4/5 h-[calc(80%_-_2.5rem)] overflow-y-scroll bg-[--secondary] pointer-events-auto pl-2 pr-2 pt-4 pb-4 ">
+            {pages.map((page, index) => {
+              const pageId = String(page).split("/")[8];
+              const isSelected = chosenPages?.includes(pageId);
+              return (
+                <button
+                  key={index}
+                  className="w-full aspect-[2/3] relative"
+                  onClick={() => {
+                    if (isSelected && chosenPages) {
+                      setChosenPages((prev) =>
+                        prev?.filter((page) => page !== pageId)
+                      );
+                    } else {
+                      setChosenPages((prev) => {
+                        if (prev) {
+                          return [...prev, pageId];
+                        } else {
+                          return [pageId];
+                        }
+                      });
+                    }
+                  }}
+                  type="button"
+                >
+                  <img src={page} alt="thumbnail" className="w-full h-full" />
+                  {isSelected && chosenPages && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                      <p className="text-3xl text-[--primaryText]">
+                        {chosenPages.indexOf(pageId) + 1}
+                      </p>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex justify-center w-4/5 h-10 pointer-events-auto">
+            <button
+              className="w-2/3 h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly] cursor-pointer"
+              onClick={() => setChoosePages(false)}
+              type="button"
+            >
+              Save
+            </button>
           </div>
         </div>
       )}

@@ -1723,19 +1723,25 @@ export const getColorPalattes = async () => {
 };
 
 export const createChapter = async (
-  authorId: string,
   title: string,
   thumbnailId: string,
   pageIds: string[],
-  Title: Title,
+  Title: string,
   chapterIndex: number,
   description: string,
-  ColorPalette: ColorPalette,
+  ColorPalette: string,
   subtitle: string
 ) => {
   try {
     const user = await account.get();
     const chapterId = ID.unique();
+
+    const author = await databases.listDocuments(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_AUTHORS_TABLE_ID || "",
+      [Query.equal("userId", user.$id)]
+    );
+    const authorId = author.documents[0].$id;
 
     const newChapterStats = await databases.createDocument(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
@@ -1770,8 +1776,8 @@ export const createChapter = async (
         pages: pageIds,
         thumbnail: thumbnailId,
         Author: authorId,
-        Titles: Title.$id,
-        ColorPalette: ColorPalette.$id,
+        Titles: Title,
+        ColorPalette: ColorPalette,
         number: chapterIndex,
         subtitle: subtitle,
         ChapterStats: newChapterStats.$id,
