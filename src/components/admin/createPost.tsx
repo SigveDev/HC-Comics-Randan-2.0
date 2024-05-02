@@ -1,5 +1,7 @@
 import { useState } from "react";
 import ChapterForm from "./chapterForm";
+import ArtForm from "./artForm";
+import TitleForm from "./titleForm";
 
 const CreatePost = () => {
   const [type, setType] = useState<string>("chapter");
@@ -27,6 +29,8 @@ const CreatePost = () => {
         </button>
       </div>
       {type === "chapter" && <ChapterForm />}
+      {type === "art" && <ArtForm />}
+      {type === "title" && <TitleForm />}
     </div>
   );
 };

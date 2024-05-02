@@ -1123,7 +1123,7 @@ export const getTitleByID = async (id: string) => {
 export const getTitleImage = (id: string) => {
   try {
     const image = storage.getFileView(
-      (import.meta as any).env.VITE_STORAGE_TITLETHUMBNAIL_ID || "",
+      (import.meta as any).env.VITE_STORAGE_THUMBNAIL_ID || "",
       id
     );
     return image;
@@ -1722,6 +1722,54 @@ export const getColorPalattes = async () => {
   }
 };
 
+export const createAuthor = async (name: string, file: File) => {
+  try {
+    const user = await account.get();
+    const authorId = ID.unique();
+
+    const pfp = await storage.createFile(
+      (import.meta as any).env.VITE_STORAGE_AUTHORPFP_ID || "",
+      ID.unique(),
+      file,
+      [
+        Permission.read("user:" + user.$id),
+        Permission.update("user:" + user.$id),
+        Permission.delete("user:" + user.$id),
+      ]
+    );
+
+    const newAuthorStats = await databases.createDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_AUTHORSTATS_TABLE_ID || "",
+      ID.unique(),
+      {
+        Author: authorId,
+        Followers: 0,
+      }
+    );
+
+    const newAuthor = await databases.createDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_AUTHORS_TABLE_ID || "",
+      authorId,
+      {
+        name: name,
+        userId: user.$id,
+        pfp: pfp.$id,
+        AuthorStats: newAuthorStats.$id,
+      },
+      [
+        Permission.read("user:" + user.$id),
+        Permission.update("user:" + user.$id),
+        Permission.delete("user:" + user.$id),
+      ]
+    );
+    return newAuthor;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const createChapter = async (
   title: string,
   thumbnailId: string,
@@ -1790,6 +1838,108 @@ export const createChapter = async (
       ]
     );
     return newChapter;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const createArt = async (
+  title: string,
+  description: string,
+  artCoverID: string
+) => {
+  try {
+    const user = await account.get();
+    const artId = ID.unique();
+
+    const author = await databases.listDocuments(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_AUTHORS_TABLE_ID || "",
+      [Query.equal("userId", user.$id)]
+    );
+    const authorId = author.documents[0].$id;
+
+    const newArtStats = await databases.createDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_ARTSTATS_TABLE_ID || "",
+      ID.unique(),
+      {
+        Art: artId,
+        Views: 0,
+        Likes: 0,
+        Shares: 0,
+        Comments: 0,
+      }
+    );
+
+    const newArt = await databases.createDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_ART_TABLE_ID || "",
+      artId,
+      {
+        title: title,
+        description: description,
+        image: artCoverID,
+        Author: authorId,
+        ArtStats: newArtStats.$id,
+      },
+      [
+        Permission.read("user:" + user.$id),
+        Permission.update("user:" + user.$id),
+        Permission.delete("user:" + user.$id),
+      ]
+    );
+    return newArt;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const createTitle = async (
+  title: string,
+  description: string,
+  thumbnailID: string
+) => {
+  try {
+    const user = await account.get();
+    const titleId = ID.unique();
+
+    const author = await databases.listDocuments(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_AUTHORS_TABLE_ID || "",
+      [Query.equal("userId", user.$id)]
+    );
+    const authorId = author.documents[0].$id;
+
+    const newTitleStats = await databases.createDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_TITLESTATS_TABLE_ID || "",
+      ID.unique(),
+      {
+        Title: titleId,
+        Followers: 0,
+      }
+    );
+
+    const newTitle = await databases.createDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_TITLES_TABLE_ID || "",
+      titleId,
+      {
+        name: title,
+        description: description,
+        thumbnail: thumbnailID,
+        Author: authorId,
+        Chapters: [],
+        TitleStats: newTitleStats.$id,
+      },
+      [
+        Permission.read("user:" + user.$id),
+        Permission.update("user:" + user.$id),
+        Permission.delete("user:" + user.$id),
+      ]
+    );
+    return newTitle;
   } catch (error) {
     return error;
   }

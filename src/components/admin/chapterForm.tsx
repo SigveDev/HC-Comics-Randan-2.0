@@ -12,7 +12,7 @@ import {
   getMyPages,
   createChapter,
 } from "../../lib/Appwrite";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const ChapterForm = () => {
@@ -24,15 +24,17 @@ const ChapterForm = () => {
   const [title, setTitle] = useState<string>("");
   const [chosenThumbnail, setChosenThumbnail] = useState<string>();
   const [chosenPages, setChosenPages] = useState<string[]>([]);
-  const [chosenTitle, setChosenTitle] = useState<string>();
-  const [titleIndex, setChapterIndex] = useState<number>();
+  const [chosenTitle, setChosenTitle] = useState<string>("default");
+  const [titleIndex, setChapterIndex] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const [chosenColorPalette, setChosenColorPalette] = useState<string>();
+  const [chosenColorPalette, setChosenColorPalette] =
+    useState<string>("default");
   const [subtitle, setSubtitle] = useState<string>("");
 
   const [chooseThumbnail, setChooseThumbnail] = useState<boolean>(false);
   const [choosePages, setChoosePages] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTitles = async () => {
@@ -77,7 +79,7 @@ const ChapterForm = () => {
         if (title) {
           setChapterIndex(1);
         } else {
-          setChapterIndex(undefined);
+          setChapterIndex(0);
         }
       }
     } else {
@@ -89,6 +91,7 @@ const ChapterForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     console.log({
       title,
       chosenThumbnail,
@@ -448,6 +451,12 @@ const ChapterForm = () => {
               Save
             </button>
           </div>
+        </div>
+      )}
+
+      {loading && (
+        <div className="fixed top-0 right-0 flex flex-col items-center justify-center w-dvw h-dvh bg-black/50">
+          <Loader2 className="w-12 h-12 text-[--primary] animate-spin" />
         </div>
       )}
     </div>
