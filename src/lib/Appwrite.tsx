@@ -2,7 +2,6 @@ import {
   Art,
   Author,
   Chapter,
-  ColorPalette,
   FollowingRequest,
   LikesRequest,
   Title,
