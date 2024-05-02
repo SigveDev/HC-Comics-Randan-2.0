@@ -171,6 +171,8 @@ function App() {
     setColors();
   }, []);
 
+  console.log("welcome!");
+
   return (
     <BrowserRouter>
       <div className="w-full bg-[--background] min-h-dvh">
