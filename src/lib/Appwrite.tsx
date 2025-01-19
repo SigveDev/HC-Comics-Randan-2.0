@@ -1551,20 +1551,42 @@ export const uploadArt = async (file: File) => {
 
 export const getMyThumbnails = async () => {
   try {
-    const fileIDlist = await databases.listDocuments(
+    let fileIDlist = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-      (import.meta as any).env.VITE_UPLOADES_TABLE_ID || ""
+      (import.meta as any).env.VITE_UPLOADES_TABLE_ID || "",
+      [Query.limit(25)]
     );
-    const thumbnails: URL[] = [];
-    fileIDlist.documents.forEach(async (uplaodInfo: any) => {
-      if (uplaodInfo.type === "thumbnail") {
-        const thumbnail = await storage.getFileView(
-          (import.meta as any).env.VITE_STORAGE_THUMBNAIL_ID || "",
-          uplaodInfo.fileId
-        );
-        thumbnails.push(thumbnail);
-      }
+
+    const totalRequests = Math.ceil(fileIDlist.total / 25) - 1;
+
+    for (let i = 1; i <= totalRequests; i++) {
+      const additionalFileIDlist = await databases.listDocuments(
+        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+        (import.meta as any).env.VITE_UPLOADES_TABLE_ID || "",
+        [Query.limit(25), Query.offset(i * 25)]
+      );
+      fileIDlist.documents.push(...additionalFileIDlist.documents);
+    }
+
+    fileIDlist.documents.sort((a: any, b: any) => {
+      return (
+        new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      );
     });
+
+    const thumbnails = (
+      await Promise.all(
+        fileIDlist.documents.map(async (uploadInfo: any) => {
+          if (uploadInfo.type === "thumbnail") {
+            return await storage.getFileView(
+              (import.meta as any).env.VITE_STORAGE_THUMBNAIL_ID || "",
+              uploadInfo.fileId
+            );
+          }
+        })
+      )
+    ).filter((thumbnail): thumbnail is URL => thumbnail !== undefined);
+
     return thumbnails;
   } catch (error) {
     return error;
@@ -1573,20 +1595,42 @@ export const getMyThumbnails = async () => {
 
 export const getMyPages = async () => {
   try {
-    const fileIDlist = await databases.listDocuments(
+    let fileIDlist = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-      (import.meta as any).env.VITE_UPLOADES_TABLE_ID || ""
+      (import.meta as any).env.VITE_UPLOADES_TABLE_ID || "",
+      [Query.limit(25)]
     );
-    const pages: URL[] = [];
-    fileIDlist.documents.forEach(async (uplaodInfo: any) => {
-      if (uplaodInfo.type === "page") {
-        const page = await storage.getFileView(
-          (import.meta as any).env.VITE_STORAGE_PAGES_ID || "",
-          uplaodInfo.fileId
-        );
-        pages.push(page);
-      }
+
+    const totalRequests = Math.ceil(fileIDlist.total / 25) - 1;
+
+    for (let i = 1; i <= totalRequests; i++) {
+      const additionalFileIDlist = await databases.listDocuments(
+        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+        (import.meta as any).env.VITE_UPLOADES_TABLE_ID || "",
+        [Query.limit(25), Query.offset(i * 25)]
+      );
+      fileIDlist.documents.push(...additionalFileIDlist.documents);
+    }
+
+    fileIDlist.documents.sort((a: any, b: any) => {
+      return (
+        new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      );
     });
+
+    const pages = (
+      await Promise.all(
+        fileIDlist.documents.map(async (uploadInfo: any) => {
+          if (uploadInfo.type === "page") {
+            return await storage.getFileView(
+              (import.meta as any).env.VITE_STORAGE_PAGES_ID || "",
+              uploadInfo.fileId
+            );
+          }
+        })
+      )
+    ).filter((page): page is URL => page !== undefined);
+
     return pages;
   } catch (error) {
     return error;
@@ -1595,20 +1639,42 @@ export const getMyPages = async () => {
 
 export const getMyArt = async () => {
   try {
-    const fileIDlist = await databases.listDocuments(
+    let fileIDlist = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-      (import.meta as any).env.VITE_UPLOADES_TABLE_ID || ""
+      (import.meta as any).env.VITE_UPLOADES_TABLE_ID || "",
+      [Query.limit(25)]
     );
-    const arts: URL[] = [];
-    fileIDlist.documents.forEach(async (uplaodInfo: any) => {
-      if (uplaodInfo.type === "art") {
-        const art = await storage.getFileView(
-          (import.meta as any).env.VITE_STORAGE_ART_ID || "",
-          uplaodInfo.fileId
-        );
-        arts.push(art);
-      }
+
+    const totalRequests = Math.ceil(fileIDlist.total / 25) - 1;
+
+    for (let i = 1; i <= totalRequests; i++) {
+      const additionalFileIDlist = await databases.listDocuments(
+        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+        (import.meta as any).env.VITE_UPLOADES_TABLE_ID || "",
+        [Query.limit(25), Query.offset(i * 25)]
+      );
+      fileIDlist.documents.push(...additionalFileIDlist.documents);
+    }
+
+    fileIDlist.documents.sort((a: any, b: any) => {
+      return (
+        new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      );
     });
+
+    const arts = (
+      await Promise.all(
+        fileIDlist.documents.map(async (uploadInfo: any) => {
+          if (uploadInfo.type === "art") {
+            return await storage.getFileView(
+              (import.meta as any).env.VITE_STORAGE_ART_ID || "",
+              uploadInfo.fileId
+            );
+          }
+        })
+      )
+    ).filter((art): art is URL => art !== undefined);
+
     return arts;
   } catch (error) {
     return error;
