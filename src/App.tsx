@@ -132,9 +132,14 @@ function App() {
 
   useEffect(() => {
     const setColors = async () => {
-      const chapter: ChapterRequest =
-        (await getLatestChapter()) as ChapterRequest;
-      const colorPalette = chapter.documents[0].ColorPalette;
+      let colorPalette;
+      try {
+        const chapter: ChapterRequest =
+          (await getLatestChapter()) as ChapterRequest;
+        colorPalette = chapter.documents[0]?.ColorPalette;
+      } catch (error) {
+        console.log("No latest chapters found, using default colors.");
+      }
       document.documentElement.style.setProperty(
         "--primary",
         colorPalette?.primary || "#18ADF5"
