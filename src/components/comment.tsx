@@ -50,12 +50,21 @@ const Comment = ({
               style={{ whiteSpace: "pre-wrap" }}
             >
               {newComment.length > 0 &&
-                newComment.map((commentPart: string) => {
+                newComment.map((commentPart: string, index: number) => {
+                  const isIframe = commentPart.startsWith("<iframe");
                   return (
-                    <>
-                      {commentPart}
-                      <br />
-                    </>
+                    <div key={index}>
+                      {isIframe ? (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: commentPart }}
+                        />
+                      ) : (
+                        <>
+                          {commentPart}
+                          <br />
+                        </>
+                      )}
+                    </div>
                   );
                 })}
             </p>
