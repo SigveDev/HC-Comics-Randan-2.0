@@ -14,12 +14,17 @@ const Home = () => {
       const chapters: ChapterRequest = (await getChapters(
         true
       )) as ChapterRequest;
-      setChapters(chapters.documents);
 
       const fontpageChapter = chapters.documents.filter((chapter) => {
         return chapter.Titles.Frontpage === true;
       })[0];
       setFontpageChapter(fontpageChapter);
+
+      const leftOverChapters = chapters.documents.filter((chapter) => {
+        return chapter.$id !== fontpageChapter.$id;
+      });
+
+      setChapters(leftOverChapters);
     };
     fetchChapters();
   }, []);
@@ -30,7 +35,7 @@ const Home = () => {
         {fontpageChapter && <LatestRelease {...fontpageChapter} />}
       </div>
       <div className="w-full lg:col-span-4 md:col-span-1 h-fit sm:col-span-1">
-        {chapters.length > 0 && <ChaptersList chapters={chapters.slice(1)} />}
+        {chapters.length > 0 && <ChaptersList chapters={chapters} />}
       </div>
       <div className="w-full lg:col-span-2 md:col-span-1 h-fit sm:col-span-1">
         <SocialsList />
