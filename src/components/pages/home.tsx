@@ -7,6 +7,7 @@ import { getChapters } from "../../lib/Appwrite";
 
 const Home = () => {
   const [chapters, setChapters] = useState<Chapter[]>([]);
+  const [fontpageChapter, setFontpageChapter] = useState<Chapter>();
 
   useEffect(() => {
     const fetchChapters = async () => {
@@ -14,6 +15,11 @@ const Home = () => {
         true
       )) as ChapterRequest;
       setChapters(chapters.documents);
+
+      const fontpageChapter = chapters.documents.filter((chapter) => {
+        return chapter.Titles.Frontpage === true;
+      })[0];
+      setFontpageChapter(fontpageChapter);
     };
     fetchChapters();
   }, []);

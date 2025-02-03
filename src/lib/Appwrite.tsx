@@ -710,14 +710,22 @@ export const getChapters = async (asc: boolean) => {
       const chapters = await databases.listDocuments(
         (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
         (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || "",
-        [Query.orderDesc("$createdAt"), Query.limit(10)]
+        [
+          Query.orderDesc("$createdAt"),
+          Query.limit(10),
+          Query.notEqual("Author", "67a0003b94ae27bc8f8e"),
+        ]
       );
       return chapters;
     } else {
       const chapters = await databases.listDocuments(
         (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
         (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || "",
-        [Query.orderAsc("$createdAt"), Query.limit(10)]
+        [
+          Query.orderAsc("$createdAt"),
+          Query.limit(10),
+          Query.notEqual("Author", "67a0003b94ae27bc8f8e"),
+        ]
       );
       return chapters;
     }
@@ -1098,7 +1106,8 @@ export const getTitles = async () => {
   try {
     const titles = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-      (import.meta as any).env.VITE_TITLES_TABLE_ID || ""
+      (import.meta as any).env.VITE_TITLES_TABLE_ID || "",
+      [Query.notEqual("Author", "67a0003b94ae27bc8f8e")]
     );
     return titles;
   } catch (error) {
@@ -1137,7 +1146,12 @@ export const getArtPostsPagination = async (placement: number) => {
     const artPosts = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
       (import.meta as any).env.VITE_ART_TABLE_ID || "",
-      [Query.orderDesc("$createdAt"), Query.limit(24), Query.offset(offset)]
+      [
+        Query.orderDesc("$createdAt"),
+        Query.limit(24),
+        Query.offset(offset),
+        Query.notEqual("Author", "67a0003b94ae27bc8f8e"),
+      ]
     );
     return artPosts;
   } catch (error) {
@@ -1253,22 +1267,38 @@ export const getSearchResults = async (query: string) => {
     const searchResults = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
       (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || "",
-      [Query.search("title", query), Query.limit(10)]
+      [
+        Query.search("title", query),
+        Query.limit(10),
+        Query.notEqual("Author", "67a0003b94ae27bc8f8e"),
+      ]
     );
     const titlesResults = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
       (import.meta as any).env.VITE_TITLES_TABLE_ID || "",
-      [Query.search("name", query), Query.limit(10)]
+      [
+        Query.search("name", query),
+        Query.limit(10),
+        Query.notEqual("Author", "67a0003b94ae27bc8f8e"),
+      ]
     );
     const authorsResults = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
       (import.meta as any).env.VITE_AUTHORS_TABLE_ID || "",
-      [Query.search("name", query), Query.limit(10)]
+      [
+        Query.search("name", query),
+        Query.limit(10),
+        Query.notEqual("$id", "67a0003b94ae27bc8f8e"),
+      ]
     );
     const artResults = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
       (import.meta as any).env.VITE_ART_TABLE_ID || "",
-      [Query.search("title", query), Query.limit(10)]
+      [
+        Query.search("title", query),
+        Query.limit(10),
+        Query.notEqual("Author", "67a0003b94ae27bc8f8e"),
+      ]
     );
     const all = {
       chapters: searchResults.documents,
@@ -1963,7 +1993,8 @@ export const createArt = async (
 export const createTitle = async (
   title: string,
   description: string,
-  thumbnailID: string
+  thumbnailID: string,
+  frontpage: boolean
 ) => {
   try {
     const user = await account.get();
@@ -1997,6 +2028,7 @@ export const createTitle = async (
         Author: authorId,
         Chapters: [],
         TitleStats: newTitleStats.$id,
+        Frontpage: frontpage,
       },
       [
         Permission.read("user:" + user.$id),

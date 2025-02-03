@@ -11,6 +11,7 @@ const TitleForm = () => {
   const [chosenImage, setChosenImage] = useState<string>();
 
   const [chooseImage, setChooseImage] = useState<boolean>(false);
+  const [frontpage, setFrontpage] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
@@ -30,7 +31,7 @@ const TitleForm = () => {
     setLoading(true);
     console.log({ title, description, chosenImage });
     if (title && description && chosenImage) {
-      await createTitle(title, description, chosenImage);
+      await createTitle(title, description, chosenImage, frontpage);
       window.location.reload();
     }
   };
@@ -110,6 +111,22 @@ const TitleForm = () => {
             <p className="text-[--secondaryText] text-sm text-right flex flex-row w-full justify-end">
               {description.length}/128
             </p>
+            <br />
+            <div className="flex flex-row items-center justify-start gap-2 w-fit h-fit">
+              <p className="text-sm font-semibold text-[--primaryText]">
+                Frontpage:
+              </p>
+              <label className="relative inline-flex items-center ml-2 cursor-pointer w-fit">
+                <input
+                  type="checkbox"
+                  value=""
+                  className="sr-only peer"
+                  onClick={() => setFrontpage(!frontpage)}
+                  defaultChecked={frontpage}
+                />
+                <div className="w-11 h-6 peer-focus:outline-none rounded-full peer bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[--primary]"></div>
+              </label>
+            </div>
           </div>
         </div>
         <button

@@ -92,7 +92,7 @@ const SearchPage = () => {
         </div>
       </div>
       <div
-        className={`grid w-full ${tabb === "chapters" && "xl:grid-cols-2 lg:grid-cols-2 grid-cols-1"} ${tabb === "art" && "xl:grid-cols-6 lg:grid-cols-6 grid-cols-3"} ${tabb === "titles" && "xl:grid-cols-3 lg:grid-cols-3 grid-cols-1"} ${tabb === "authors" && "grid-cols-1"} gap-2 py-8 xl:px-12 lg:px-12 px-4 h-fit`}
+        className={`grid w-full ${tabb === "chapters" && "xl:grid-cols-2 lg:grid-cols-2 grid-cols-1"} ${tabb === "art" && "xl:grid-cols-6 lg:grid-cols-6 grid-cols-3"} ${tabb === "titles" && "xl:grid-cols-5 lg:grid-cols-3 grid-cols-1"} ${tabb === "authors" && "grid-cols-1"} gap-2 py-8 xl:px-12 lg:px-12 px-4 h-fit`}
       >
         {tabb === "chapters" &&
           searchResults?.chapters.map((chapter, index) => {

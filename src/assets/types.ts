@@ -70,6 +70,7 @@ export type Title = {
   Chapters: Chapter[];
   thumbnail: string;
   TitleStats: TitleStats;
+  Frontpage: boolean;
 };
 export type TitleRequest = {
   documents: Title[];

@@ -11,6 +11,7 @@ import Analytics from "../../../components/admin/analytics";
 import Upload from "../../../components/admin/upload";
 import CreatePost from "../../../components/admin/createPost";
 import { useDropzone } from "react-dropzone";
+import TitlesListA from "../../../components/admin/titlesListA";
 
 const AdminHome = () => {
   const [author, setAuthor] = useState<Author | null>(null);
@@ -77,6 +78,12 @@ const AdminHome = () => {
           My Art
         </button>
         <button
+          className={`flex items-center justify-start h-12 text-xl ${tabb === "titles" ? "w-full pl-6" : "pl-2 w-2/3 hover:pl-4 hover:w-5/6"} font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent`}
+          onClick={() => setTabb("titles")}
+        >
+          My Titles
+        </button>
+        <button
           className={`flex items-center justify-start h-12 text-xl ${tabb === "analytics" ? "w-full pl-6" : "pl-2 w-2/3 hover:pl-4 hover:w-5/6"} font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent`}
           onClick={() => setTabb("analytics")}
         >
@@ -86,7 +93,7 @@ const AdminHome = () => {
           className={`flex items-center justify-start h-12 text-xl ${tabb === "newPosts" ? "w-full pl-6" : "pl-2 w-2/3 hover:pl-4 hover:w-5/6"} font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent`}
           onClick={() => setTabb("newPosts")}
         >
-          New Posts
+          New
         </button>
         <button
           className={`flex items-center justify-start h-12 text-xl ${tabb === "upload" ? "w-full pl-6" : "pl-2 w-2/3 hover:pl-4 hover:w-5/6"} font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent`}
@@ -107,6 +114,7 @@ const AdminHome = () => {
           <ChaptersListA chapters={author.Chapters} />
         )}
         {tabb === "arts" && author && <ArtListA arts={author.Art} />}
+        {tabb === "titles" && author && <TitlesListA titles={author.Titles} />}
         {tabb === "analytics" && author && (
           <Analytics
             author={author}
