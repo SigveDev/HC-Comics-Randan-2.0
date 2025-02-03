@@ -11,7 +11,7 @@ import {
   getLatestChapter,
   postChapterRetention,
 } from "./lib/Appwrite";
-import { ChapterRequest } from "./assets/types";
+import { Chapter } from "./assets/types";
 
 import DefaultLayout from "./layouts/default";
 
@@ -134,9 +134,8 @@ function App() {
     const setColors = async () => {
       let colorPalette;
       try {
-        const chapter: ChapterRequest =
-          (await getLatestChapter()) as ChapterRequest;
-        colorPalette = chapter.documents[0]?.ColorPalette;
+        const chapter: Chapter = (await getLatestChapter()) as Chapter;
+        colorPalette = chapter?.ColorPalette;
       } catch (error) {
         console.log("No latest chapters found, using default colors.");
       }

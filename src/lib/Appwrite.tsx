@@ -796,12 +796,25 @@ export const postChapterRetention = async (id: string, readPages: number) => {
 
 export const getLatestChapter = async () => {
   try {
-    const chapter = await databases.listDocuments(
+    let chapters: Chapter[] = [];
+    const titles = await databases.listDocuments(
       (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-      (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || "",
-      [Query.orderDesc("$createdAt"), Query.limit(1)]
+      (import.meta as any).env.VITE_TITLES_TABLE_ID || "",
+      [
+        Query.equal("Frontpage", true),
+        Query.notEqual("Author", "67a0003b94ae27bc8f8e"),
+      ]
     );
-    return chapter;
+    for (let title of titles.documents) {
+      chapters.push(...title.Chapters);
+    }
+
+    chapters.sort((a, b) => {
+      return (
+        new Date(b.$createdAt).getTime() - new Date(a.$createdAt).getTime()
+      );
+    });
+    return chapters[0];
   } catch (error) {
     return error;
   }
