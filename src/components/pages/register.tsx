@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { account, createUser } from "../../lib/Appwrite";
+import { createUser } from "../../lib/Appwrite";
 
 const Register = () => {
   const [email, setEmail] = useState<string>("");
@@ -18,14 +18,7 @@ const Register = () => {
       const res: any = createUser(email, password, name);
       res
         .then(() => {
-          const login = account.createEmailSession(email, password);
-          login
-            .then(() => {
-              window.location.href = "/profile";
-            })
-            .catch((err2: any) => {
-              console.log(err2);
-            });
+          window.location.href = "/profile";
         })
         .catch((err: any) => {
           console.log(err);

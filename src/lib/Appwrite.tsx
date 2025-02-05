@@ -60,82 +60,91 @@ export const loginHCUser = (email: string, password: string) => {
 
 export const createHCUser = async (id: string, email: string, name: string) => {
   try {
-    const user = await account.create(id, email, id, name);
-    setTimeout(async () => {
-      await account.createEmailSession(email, id);
-      await account.updatePrefs({ pfp: "", HC: "true", current: "" });
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: id,
-          username: name,
-          pfp: "",
-          public: true,
-          Comments: [],
-        },
-        [
-          Permission.read(Role.any()),
-          Permission.update("user:" + id),
-          Permission.delete("user:" + id),
-        ]
-      );
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_LIKED_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: id,
-          Chapters: [],
-          Art: [],
-        },
-        [
-          Permission.read("user:" + id),
-          Permission.update("user:" + id),
-          Permission.delete("user:" + id),
-        ]
-      );
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: id,
-          Authors: [],
-          Titles: [],
-        },
-        [
-          Permission.read("user:" + id),
-          Permission.update("user:" + id),
-          Permission.delete("user:" + id),
-        ]
-      );
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_HISTORY_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: id,
-          ChapterIds: [],
-        },
-        [
-          Permission.read("user:" + id),
-          Permission.update("user:" + id),
-          Permission.delete("user:" + id),
-        ]
-      );
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_HCUSERS_TABLE_ID || "",
-        ID.unique(),
-        {
-          email: email,
-          userId: id,
-        }
-      );
-      return user;
-    }, 1000);
+    return account
+      .create(id, email, id, name)
+      .then((user) => {
+        return account.createEmailSession(email, id).then(() => {
+          return account
+            .updatePrefs({ pfp: "", HC: "true", current: "" })
+            .then(() => {
+              return Promise.all([
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: id,
+                    username: name,
+                    pfp: "",
+                    public: true,
+                    Comments: [],
+                  },
+                  [
+                    Permission.read(Role.any()),
+                    Permission.update("user:" + id),
+                    Permission.delete("user:" + id),
+                  ]
+                ),
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_LIKED_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: id,
+                    Chapters: [],
+                    Art: [],
+                  },
+                  [
+                    Permission.read("user:" + id),
+                    Permission.update("user:" + id),
+                    Permission.delete("user:" + id),
+                  ]
+                ),
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: id,
+                    Authors: [],
+                    Titles: [],
+                  },
+                  [
+                    Permission.read("user:" + id),
+                    Permission.update("user:" + id),
+                    Permission.delete("user:" + id),
+                  ]
+                ),
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_HISTORY_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: id,
+                    ChapterIds: [],
+                  },
+                  [
+                    Permission.read("user:" + id),
+                    Permission.update("user:" + id),
+                    Permission.delete("user:" + id),
+                  ]
+                ),
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_HCUSERS_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    email: email,
+                    userId: id,
+                  }
+                ),
+              ]).then(() => user);
+            });
+        });
+      })
+      .catch((error) => {
+        return error;
+      });
   } catch (error) {
     return error;
   }
@@ -226,7 +235,7 @@ export const getUserPFP = async () => {
       return avatar;
     }
   } catch (error) {
-    return error;
+    return "/assets/images/user-icon.jpg";
   }
 };
 
@@ -260,7 +269,7 @@ export const getAuthorPFP = async (id: string) => {
       return avatar;
     }
   } catch (error) {
-    return error;
+    return "/assets/images/user-icon.jpg";
   }
 };
 
@@ -294,7 +303,7 @@ export const getPublicUserPFP = async (id: string) => {
       return avatar;
     }
   } catch (error) {
-    return error;
+    return "/assets/images/user-icon.jpg";
   }
 };
 
@@ -333,73 +342,82 @@ export const createUser = async (
   name: string
 ) => {
   try {
-    const user = await account.create(ID.unique(), email, password, name);
-    setTimeout(async () => {
-      await account.createEmailSession(email, user.$id);
-      await account.updatePrefs({ pfp: "", HC: "false", current: "" });
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: user.$id,
-          username: name,
-          pfp: "",
-          public: true,
-          Comments: [],
-        },
-        [
-          Permission.read(Role.any()),
-          Permission.update("user:" + user.$id),
-          Permission.delete("user:" + user.$id),
-        ]
-      );
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_LIKED_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: user.$id,
-          Chapters: [],
-          Art: [],
-        },
-        [
-          Permission.read("user:" + user.$id),
-          Permission.update("user:" + user.$id),
-          Permission.delete("user:" + user.$id),
-        ]
-      );
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: user.$id,
-          Authors: [],
-          Titles: [],
-        },
-        [
-          Permission.read("user:" + user.$id),
-          Permission.update("user:" + user.$id),
-          Permission.delete("user:" + user.$id),
-        ]
-      );
-      await databases.createDocument(
-        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
-        (import.meta as any).env.VITE_HISTORY_TABLE_ID || "",
-        ID.unique(),
-        {
-          userId: user.$id,
-          ChapterIds: [],
-        },
-        [
-          Permission.read("user:" + user.$id),
-          Permission.update("user:" + user.$id),
-          Permission.delete("user:" + user.$id),
-        ]
-      );
-      return user;
-    }, 1000);
+    return account
+      .create(ID.unique(), email, password, name)
+      .then((user) => {
+        return account.createEmailSession(email, password).then(() => {
+          return account
+            .updatePrefs({ pfp: "", HC: "false", current: "" })
+            .then(() => {
+              return Promise.all([
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_PUBLIC_PROFILE_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: user.$id,
+                    username: name,
+                    pfp: "",
+                    public: true,
+                    Comments: [],
+                  },
+                  [
+                    Permission.read(Role.any()),
+                    Permission.update("user:" + user.$id),
+                    Permission.delete("user:" + user.$id),
+                  ]
+                ),
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_LIKED_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: user.$id,
+                    Chapters: [],
+                    Art: [],
+                  },
+                  [
+                    Permission.read("user:" + user.$id),
+                    Permission.update("user:" + user.$id),
+                    Permission.delete("user:" + user.$id),
+                  ]
+                ),
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_FOLLOWING_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: user.$id,
+                    Authors: [],
+                    Titles: [],
+                  },
+                  [
+                    Permission.read("user:" + user.$id),
+                    Permission.update("user:" + user.$id),
+                    Permission.delete("user:" + user.$id),
+                  ]
+                ),
+                databases.createDocument(
+                  (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+                  (import.meta as any).env.VITE_HISTORY_TABLE_ID || "",
+                  ID.unique(),
+                  {
+                    userId: user.$id,
+                    ChapterIds: [],
+                  },
+                  [
+                    Permission.read("user:" + user.$id),
+                    Permission.update("user:" + user.$id),
+                    Permission.delete("user:" + user.$id),
+                  ]
+                ),
+              ]).then(() => user);
+            });
+        });
+      })
+      .catch((error) => {
+        return error;
+      });
   } catch (error) {
     return error;
   }
