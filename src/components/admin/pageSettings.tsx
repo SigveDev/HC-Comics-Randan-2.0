@@ -527,7 +527,7 @@ const PageSettings = () => {
                       className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
                       onClick={() => {
                         setNewColorPalettes((prevColors = []) =>
-                          prevColors.filter((c, i) => i !== index)
+                          prevColors.filter((_c, i) => i !== index)
                         );
                       }}
                     >
