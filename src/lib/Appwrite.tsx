@@ -1848,6 +1848,86 @@ export const getColorPalattes = async () => {
   }
 };
 
+export const updateColorPalette = async (
+  id: string,
+  primary: string,
+  secondary: string,
+  thirdly: string,
+  fourthly: string,
+  primaryText: string,
+  secondaryText: string,
+  accentText: string,
+  background: string
+) => {
+  try {
+    const palette = await databases.updateDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_COLORS_TABLE_ID || "",
+      id,
+      {
+        primary: primary,
+        secondary: secondary,
+        thirdly: thirdly,
+        fourthly: fourthly,
+        primaryText: primaryText,
+        secondaryText: secondaryText,
+        accentText: accentText,
+        background: background,
+      }
+    );
+    return palette;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const createColorPalette = async (
+  name: string,
+  primary: string,
+  secondary: string,
+  thirdly: string,
+  fourthly: string,
+  primaryText: string,
+  secondaryText: string,
+  accentText: string,
+  background: string
+) => {
+  try {
+    const palette = await databases.createDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_COLORS_TABLE_ID || "",
+      ID.unique(),
+      {
+        name: name,
+        primary: primary,
+        secondary: secondary,
+        thirdly: thirdly,
+        fourthly: fourthly,
+        primaryText: primaryText,
+        secondaryText: secondaryText,
+        accentText: accentText,
+        background: background,
+      }
+    );
+    return palette;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const deleteColorPalette = async (id: string) => {
+  try {
+    await databases.deleteDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_COLORS_TABLE_ID || "",
+      id
+    );
+    return true;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const createAuthor = async (name: string, file: File) => {
   try {
     const user = await account.get();

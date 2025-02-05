@@ -12,6 +12,7 @@ import Upload from "../../../components/admin/upload";
 import CreatePost from "../../../components/admin/createPost";
 import { useDropzone } from "react-dropzone";
 import TitlesListA from "../../../components/admin/titlesListA";
+import PageSettings from "../../../components/admin/pageSettings";
 
 const AdminHome = () => {
   const [author, setAuthor] = useState<Author | null>(null);
@@ -106,7 +107,7 @@ const AdminHome = () => {
           className={`flex items-center justify-start h-12 text-xl ${tabb === "settings" ? "w-full pl-6" : "pl-2 w-2/3 hover:pl-4 hover:w-5/6"} font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent`}
           onClick={() => setTabb("settings")}
         >
-          Settings
+          Page Settings
         </button>
       </div>
       <div className="flex flex-col w-full col-span-7 gap-6 px-16 h-fit">
@@ -124,7 +125,7 @@ const AdminHome = () => {
         )}
         {tabb === "newPosts" && <CreatePost />}
         {tabb === "upload" && <Upload />}
-        {tabb === "settings" && <p>Settings</p>}
+        {tabb === "settings" && <PageSettings />}
       </div>
 
       {createAuthorModal && (
