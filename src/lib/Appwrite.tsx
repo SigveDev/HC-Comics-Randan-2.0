@@ -1850,6 +1850,7 @@ export const getColorPalattes = async () => {
 
 export const updateColorPalette = async (
   id: string,
+  name: string,
   primary: string,
   secondary: string,
   thirdly: string,
@@ -1865,6 +1866,7 @@ export const updateColorPalette = async (
       (import.meta as any).env.VITE_COLORS_TABLE_ID || "",
       id,
       {
+        name: name,
         primary: primary,
         secondary: secondary,
         thirdly: thirdly,

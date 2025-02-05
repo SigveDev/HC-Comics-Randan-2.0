@@ -113,6 +113,7 @@ const PageSettings = () => {
       const correctColorPalette = tempColors.find((color) => color.$id === id);
       const response = await updateColorPalette(
         id,
+        correctColorPalette?.name || "New Color Palette",
         correctColorPalette?.primary || "#000000",
         correctColorPalette?.secondary || "#000000",
         correctColorPalette?.thirdly || "#000000",
@@ -177,14 +178,22 @@ const PageSettings = () => {
               if (index === accordionColorIndex) {
                 return (
                   <div className="w-full bg-[--secondary] h-fit py-2 px-4">
-                    <div
-                      className="flex flex-row justify-between w-full cursor-pointer h-fit"
-                      onClick={() => openAccordionColorIndex(index)}
-                    >
-                      <h3 className="text-[--primaryText] font-semibold">
-                        {color.name}
-                      </h3>
-                      <ChevronDown className="w-6 h-6 text-[--primaryText]" />
+                    <div className="flex flex-row justify-between w-full h-fit">
+                      <input
+                        className="w-full h-10 p-2 text-[--primaryText] border border-transparent bg-[--secondary] focus-visible:outline-none rounded-none"
+                        value={color.name}
+                        onChange={(e) =>
+                          setTempColors((prevColors = []) =>
+                            prevColors.map((c, i) =>
+                              i === index ? { ...c, name: e.target.value } : c
+                            )
+                          )
+                        }
+                      />
+                      <ChevronDown
+                        className="w-6 h-6 text-[--primaryText] cursor-pointer"
+                        onClick={() => openAccordionColorIndex(index)}
+                      />
                     </div>
                     <div className="grid grid-cols-4 gap-4">
                       <div className="w-full h-fit">
@@ -353,15 +362,15 @@ const PageSettings = () => {
                 );
               } else {
                 return (
-                  <div
-                    className="w-full bg-[--secondary] h-fit py-2 px-4"
-                    onClick={() => openAccordionColorIndex(index)}
-                  >
-                    <div className="flex flex-row justify-between w-full cursor-pointer h-fit">
+                  <div className="w-full bg-[--secondary] h-fit py-2 px-4">
+                    <div className="flex flex-row justify-between w-full h-fit">
                       <h3 className="text-[--primaryText] font-semibold">
                         {color.name}
                       </h3>
-                      <ChevronLeft className="w-6 h-6 text-[--primaryText]" />
+                      <ChevronLeft
+                        className="w-6 h-6 text-[--primaryText] cursor-pointer"
+                        onClick={() => openAccordionColorIndex(index)}
+                      />
                     </div>
                   </div>
                 );
@@ -376,7 +385,7 @@ const PageSettings = () => {
             {newColorPalettes.map((color, index) => {
               return (
                 <div className="w-full bg-[--secondary] h-fit py-2 px-4">
-                  <div className="flex flex-row justify-between w-full cursor-pointer h-fit">
+                  <div className="flex flex-row justify-between w-full h-fit">
                     <input
                       className="w-full h-10 p-2 text-[--primaryText] bg-[--background] border-[--primary] border-2 focus-visible:outline-none rounded-none"
                       value={color.name}
