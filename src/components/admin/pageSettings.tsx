@@ -177,10 +177,10 @@ const PageSettings = () => {
             {tempColors.map((color, index) => {
               if (index === accordionColorIndex) {
                 return (
-                  <div className="w-full bg-[--secondary] h-fit py-2 px-4">
+                  <div className="w-full bg-[--background] border border-[--primary] h-fit py-2 px-4">
                     <div className="flex flex-row justify-between w-full h-fit">
                       <input
-                        className="w-full h-10 p-2 text-[--primaryText] border border-transparent bg-[--secondary] focus-visible:outline-none rounded-none"
+                        className="w-full border-x-0 border-t-0 border-b border-[--primary] h-6 mb-2 mr-2 p-0 text-[--primaryText] bg-[--background] focus-visible:outline-none rounded-none"
                         value={color.name}
                         onChange={(e) =>
                           setTempColors((prevColors = []) =>
@@ -195,8 +195,8 @@ const PageSettings = () => {
                         onClick={() => openAccordionColorIndex(index)}
                       />
                     </div>
-                    <div className="grid grid-cols-4 gap-4">
-                      <div className="w-full h-fit">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Primary Color:
                         </p>
@@ -211,7 +211,7 @@ const PageSettings = () => {
                           }
                         />
                       </div>
-                      <div className="w-full h-fit">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Secondary Color:
                         </p>
@@ -226,7 +226,7 @@ const PageSettings = () => {
                           }
                         />
                       </div>
-                      <div className="w-full h-fit">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Thirdly Color:
                         </p>
@@ -241,7 +241,7 @@ const PageSettings = () => {
                           }
                         />
                       </div>
-                      <div className="w-full h-fit">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Fourthly Color:
                         </p>
@@ -256,7 +256,7 @@ const PageSettings = () => {
                           }
                         />
                       </div>
-                      <div className="w-full h-fit">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Primary Text Color:
                         </p>
@@ -273,7 +273,7 @@ const PageSettings = () => {
                           }
                         />
                       </div>
-                      <div className="w-full h-fit">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Secondary Text Color:
                         </p>
@@ -290,7 +290,7 @@ const PageSettings = () => {
                           }
                         />
                       </div>
-                      <div className="w-full h-fit">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Accent Text Color:
                         </p>
@@ -305,7 +305,7 @@ const PageSettings = () => {
                           }
                         />
                       </div>
-                      <div className="w-full h-fit">
+                      <div className="flex flex-col justify-between w-full h-18">
                         <p className="text-[--primaryText] text-sm">
                           Background Color:
                         </p>
@@ -321,18 +321,23 @@ const PageSettings = () => {
                         />
                       </div>
                     </div>
-                    <div className="flex gap-6 mt-8">
+                    <div className="w-full mt-8 h-fit">
                       <button
-                        className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
+                        className="w-full h-10 p-2 text-lg text-[--primaryText] font-bold bg-gradient-to-r from-[--secondary] via-[--primary] to-[--secondary]"
                         onClick={() => {
-                          setTestColorPalette(color);
+                          if (testColorPalette === color) {
+                            setTestColorPalette(undefined);
+                          } else {
+                            setTestColorPalette(color);
+                          }
                         }}
-                        disabled={testColorPalette === color}
                       >
-                        Test
+                        {testColorPalette === color ? "Stop testing" : "Test"}
                       </button>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 mt-4 md:gap-6 md:grid-cols-3">
                       <button
-                        className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
+                        className="w-full h-10 p-2 text-[--accentText] bg-[-background] border border-[--secondary] hover:bg-[--secondary]"
                         onClick={() => {
                           setTempColors(() => {
                             const temp = [...tempColors];
@@ -346,13 +351,13 @@ const PageSettings = () => {
                         Reset
                       </button>
                       <button
-                        className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
+                        className="w-full h-10 p-2 text-[--accentText] bg-[-background] border border-[--secondary] hover:bg-[--secondary]"
                         onClick={() => handleSavingColors(color.$id)}
                       >
                         Save
                       </button>
                       <button
-                        className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
+                        className="w-full h-10 p-2 text-[#eb3333] bg-[-background] border border-[#671818] hover:bg-[#671818]"
                         onClick={() => handleDeleteColorPalette(color.$id)}
                       >
                         Delete
@@ -362,7 +367,7 @@ const PageSettings = () => {
                 );
               } else {
                 return (
-                  <div className="w-full bg-[--secondary] h-fit py-2 px-4">
+                  <div className="w-full bg-[--background] border border-[--primary] h-fit py-2 px-4">
                     <div className="flex flex-row justify-between w-full h-fit">
                       <h3 className="text-[--primaryText] font-semibold">
                         {color.name}
@@ -384,10 +389,10 @@ const PageSettings = () => {
           <div className="grid grid-cols-1 gap-4 h-fit">
             {newColorPalettes.map((color, index) => {
               return (
-                <div className="w-full bg-[--secondary] h-fit py-2 px-4">
+                <div className="w-full bg-[--background] border border-[--primary] h-fit py-2 px-4">
                   <div className="flex flex-row justify-between w-full h-fit">
                     <input
-                      className="w-full h-10 p-2 text-[--primaryText] bg-[--background] border-[--primary] border-2 focus-visible:outline-none rounded-none"
+                      className="w-full border-x-0 border-t-0 border-b border-[--primary] h-6 mb-2 mr-2 p-0 text-[--primaryText] bg-[--background] focus-visible:outline-none rounded-none"
                       value={color.name}
                       onChange={(e) =>
                         setNewColorPalettes((prevColors = []) =>
@@ -399,7 +404,7 @@ const PageSettings = () => {
                     />
                   </div>
                   <div className="grid grid-cols-4 gap-4">
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Primary Color:
                       </p>
@@ -414,7 +419,7 @@ const PageSettings = () => {
                         }
                       />
                     </div>
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Secondary Color:
                       </p>
@@ -429,7 +434,7 @@ const PageSettings = () => {
                         }
                       />
                     </div>
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Thirdly Color:
                       </p>
@@ -444,7 +449,7 @@ const PageSettings = () => {
                         }
                       />
                     </div>
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Fourthly Color:
                       </p>
@@ -459,7 +464,7 @@ const PageSettings = () => {
                         }
                       />
                     </div>
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Primary Text Color:
                       </p>
@@ -474,7 +479,7 @@ const PageSettings = () => {
                         }
                       />
                     </div>
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Secondary Text Color:
                       </p>
@@ -491,7 +496,7 @@ const PageSettings = () => {
                         }
                       />
                     </div>
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Accent Text Color:
                       </p>
@@ -506,7 +511,7 @@ const PageSettings = () => {
                         }
                       />
                     </div>
-                    <div className="w-full h-fit">
+                    <div className="flex flex-col justify-between w-full h-18">
                       <p className="text-[--primaryText] text-sm">
                         Background Color:
                       </p>
@@ -522,9 +527,9 @@ const PageSettings = () => {
                       />
                     </div>
                   </div>
-                  <div className="flex gap-6 mt-4">
+                  <div className="w-full mt-8 h-fit">
                     <button
-                      className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
+                      className="w-full h-10 p-2 text-lg text-[--primaryText] font-bold bg-gradient-to-r from-[--secondary] via-[--primary] to-[--secondary]"
                       onClick={() => {
                         setTestColorPalette(color);
                       }}
@@ -532,8 +537,16 @@ const PageSettings = () => {
                     >
                       Test
                     </button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2 mt-4 md:gap-6 md:grid-cols-2">
                     <button
-                      className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
+                      className="w-full h-10 p-2 text-[--accentText] bg-[-background] border border-[--secondary] hover:bg-[--secondary]"
+                      onClick={() => handleNewColorPalette(index)}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="w-full h-10 p-2 text-[#eb3333] bg-[-background] border border-[#671818] hover:bg-[#671818]"
                       onClick={() => {
                         setNewColorPalettes((prevColors = []) =>
                           prevColors.filter((_c, i) => i !== index)
@@ -542,26 +555,10 @@ const PageSettings = () => {
                     >
                       Delete
                     </button>
-                    <button
-                      className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--thirdly] to-[--fourthly]"
-                      onClick={() => handleNewColorPalette(index)}
-                    >
-                      Save
-                    </button>
                   </div>
                 </div>
               );
             })}
-          </div>
-        )}
-        {testColorPalette && (
-          <div className="w-full mt-2 h-fit">
-            <button
-              className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--thirdly] via-[--primary] to-[--thirdly]"
-              onClick={() => setTestColorPalette(undefined)}
-            >
-              Turn off testing
-            </button>
           </div>
         )}
         <div className="w-full mt-6 h-fit">

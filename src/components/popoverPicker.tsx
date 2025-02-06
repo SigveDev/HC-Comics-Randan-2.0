@@ -20,7 +20,7 @@ export const PopoverPicker: React.FC<PopoverPickerProps> = ({
   return (
     <div className="relative">
       <div
-        className="w-full h-8 border-2 border-black cursor-pointer"
+        className="w-full h-8 cursor-pointer"
         style={{ backgroundColor: color }}
         onClick={() => toggle(true)}
       />
