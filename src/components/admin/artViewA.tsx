@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getArtImage } from "../../lib/Appwrite";
 import { Art } from "../../assets/types";
 import { Pencil, BarChart3 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ArtViewA = ({ art }: { art: Art }) => {
   const [artImage, setArtImage] = useState<URL>();
@@ -15,23 +16,23 @@ const ArtViewA = ({ art }: { art: Art }) => {
   }, []);
 
   return (
-    <a className="relative w-full h-fit" href={"/a/" + art.$id}>
+    <Link className="relative w-full h-fit" to={"/a/" + art.$id}>
       <img src={artImage?.href} alt="Art" className="w-full aspect-[2/3]" />
       <div className="absolute top-0 right-0 flex flex-row justify-between w-full px-4 pt-4 pb-8 h-fit bg-gradient-to-b from-[#00000090] from-60% to-transparent">
-        <a
+        <Link
           className="flex flex-row gap-2 text-[--primaryText]"
-          href={"/admin/edit/a/" + art.$id}
+          to={"/admin/edit/a/" + art.$id}
         >
           <Pencil />
-        </a>
-        <a
+        </Link>
+        <Link
           className="flex flex-row gap-2 text-[--primaryText]"
-          href={"/admin/stats/a/" + art.$id}
+          to={"/admin/stats/a/" + art.$id}
         >
           <BarChart3 />
-        </a>
+        </Link>
       </div>
-    </a>
+    </Link>
   );
 };
 

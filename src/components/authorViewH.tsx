@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getAuthorPFP } from "../lib/Appwrite";
 import { Author } from "@/assets/types";
+import { Link } from "react-router-dom";
 
 const AuthorViewH = ({ author }: { author: Author }) => {
   const [pfp, setPfp] = useState<string>();
@@ -14,8 +15,8 @@ const AuthorViewH = ({ author }: { author: Author }) => {
   }, []);
 
   return (
-    <a
-      href={"/u/" + author.$id}
+    <Link
+      to={"/u/" + author.$id}
       className="w-full aspect-[5/1] flex flex-row p-2 bg-[--secondary] gap-4"
     >
       <img className="h-full rounded-full aspect-square" src={pfp} />
@@ -24,7 +25,7 @@ const AuthorViewH = ({ author }: { author: Author }) => {
           {author.name}
         </h1>
       </div>
-    </a>
+    </Link>
   );
 };
 

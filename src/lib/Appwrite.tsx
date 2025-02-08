@@ -2154,3 +2154,12 @@ export const createTitle = async (
     return error;
   }
 };
+
+export const getAdminStatusForLoggedInUser = async () => {
+  try {
+    await teams.get((import.meta as any).env.VITE_ADMIN_TEAM_ID || "");
+    return true;
+  } catch (error) {
+    return false;
+  }
+};

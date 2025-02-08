@@ -1,15 +1,18 @@
+import React from "react";
+import { Outlet } from "react-router-dom";
 import Header from "../components/header";
 
 interface DefaultLayoutProps {
   user: any;
-  children: React.ReactNode;
 }
 
-const DefaultLayout: React.FC<DefaultLayoutProps> = ({ user, children }) => {
+const DefaultLayout: React.FC<DefaultLayoutProps> = ({ user }) => {
   return (
     <div className="flex flex-col w-full min-h-dvh">
       <Header user={user} />
-      <main className="flex flex-col grow">{children}</main>
+      <main className="flex flex-col grow">
+        <Outlet />
+      </main>
     </div>
   );
 };

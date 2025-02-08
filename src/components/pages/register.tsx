@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createUser } from "../../lib/Appwrite";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [email, setEmail] = useState<string>("");
@@ -66,9 +67,9 @@ const Register = () => {
             onChange={(e) => setPassword2(e.target.value)}
           />
           {error && <p className="text-red-600">{error}</p>}
-          <a href="/login" className="text-[--primary]">
+          <Link to="/login" className="text-[--primary]">
             Have a user?
-          </a>
+          </Link>
           <button
             className="w-2/3 h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly]"
             type="submit"

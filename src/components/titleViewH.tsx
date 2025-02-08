@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Title } from "../assets/types";
 import { getTitleImage } from "../lib/Appwrite";
+import { Link } from "react-router-dom";
 
 const TitleViewH = ({ title }: { title: Title }) => {
   const [thumbnail, setThumbnail] = useState<URL>();
@@ -14,7 +15,7 @@ const TitleViewH = ({ title }: { title: Title }) => {
   }, [title.thumbnail]);
 
   return (
-    <a href={"/t/" + title.$id} className="w-full h-fit">
+    <Link to={"/t/" + title.$id} className="w-full h-fit">
       <h2 className="flex items-center justify-start h-7 pl-2 font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent mb-1">
         {title.name}
       </h2>
@@ -28,7 +29,7 @@ const TitleViewH = ({ title }: { title: Title }) => {
       <p className="text-[--primaryText]">
         Chapters released: {title.Chapters.length}
       </p>
-    </a>
+    </Link>
   );
 };
 

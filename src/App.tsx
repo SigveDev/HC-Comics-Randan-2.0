@@ -180,14 +180,14 @@ function App() {
   return (
     <BrowserRouter>
       <div className="w-full bg-[--background] min-h-dvh">
-        <DefaultLayout user={user}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/titles" element={<Titles />} />
-            <Route path="/art" element={<ArtPage />} />
-            <Route path="/search" element={<SearchPage />} />
+        <Routes>
+          <Route path="/" element={<DefaultLayout user={user} />}>
+            <Route index element={<Home />} />
+            <Route path="titles" element={<Titles />} />
+            <Route path="art" element={<ArtPage />} />
+            <Route path="search" element={<SearchPage />} />
             <Route
-              path="/login"
+              path="login"
               element={
                 user !== "error" && user !== null ? (
                   <Navigate to="/" />
@@ -197,7 +197,7 @@ function App() {
               }
             />
             <Route
-              path="/register"
+              path="register"
               element={
                 user !== "error" && user !== null ? (
                   <Navigate to="/" />
@@ -206,26 +206,21 @@ function App() {
                 )
               }
             />
-
-            <Route path="/c/:chapterID" element={<ChapterView />} />
-            <Route path="/t/:titleID" element={<TitleView />} />
-            <Route path="/p/:chapterID/:pageID" element={<PageView />} />
-            <Route path="/a/:artID" element={<ArtView />} />
-            <Route path="/u/:authorID" element={<AuthorPage />} />
-
+            <Route path="c/:chapterID" element={<ChapterView />} />
+            <Route path="t/:titleID" element={<TitleView />} />
+            <Route path="p/:chapterID/:pageID" element={<PageView />} />
+            <Route path="a/:artID" element={<ArtView />} />
+            <Route path="u/:authorID" element={<AuthorPage />} />
             <Route
-              path="/profile"
+              path="profile"
               element={user !== "error" ? <Profile /> : <Navigate to="/" />}
             />
-
-            <Route path="/password/reset" element={<SetNewPassword />} />
-            <Route path="/email/verify" element={<VerifyEmailPage />} />
-
-            <Route path="/fallback/:jwt" element={<Fallback />} />
-
-            <Route path="/admin" element={<AdminHome />} />
-          </Routes>
-        </DefaultLayout>
+            <Route path="password/reset" element={<SetNewPassword />} />
+            <Route path="email/verify" element={<VerifyEmailPage />} />
+            <Route path="fallback/:jwt" element={<Fallback />} />
+            <Route path="admin" element={<AdminHome />} />
+          </Route>
+        </Routes>
       </div>
     </BrowserRouter>
   );

@@ -10,12 +10,19 @@ import {
 } from "../../lib/Appwrite";
 import { useSwipeable } from "react-swipeable";
 import { History } from "../../assets/types";
+import { SkeletonBox } from "../skeleton";
+import { Link } from "react-router-dom";
 
 const PageView = () => {
   const chapterID = window.location.pathname.split("/")[2];
-  const page = window.location.pathname.split("/")[3];
+  const [page, setPage] = useState<string>(
+    window.location.pathname.split("/")[3]
+  );
   const [pageURL, setPageURL] = useState<URL>();
   const [maxPage, setMaxPage] = useState<number>();
+  const [loading, setLoading] = useState<boolean>(true);
+
+  console.log(pageURL != undefined && !loading);
 
   useEffect(() => {
     const fetchURL = async () => {
@@ -24,10 +31,11 @@ const PageView = () => {
       const pageURL: URL = (await getPage(pageID)) as URL;
       setPageURL(pageURL);
       setMaxPage(chapter.pages.length);
+      setLoading(false);
       await updateCurrent(chapterID);
     };
     fetchURL();
-  }, [chapterID]);
+  }, [chapterID, page]);
 
   useEffect(() => {
     const addPageToLocalStorage = () => {
@@ -138,7 +146,7 @@ const PageView = () => {
 
   return (
     <div className="relative flex items-center justify-center w-full h-fullpage">
-      {pageURL && (
+      {pageURL != undefined && !loading && (
         <img
           {...handleSwipable}
           className="aspect-[2/3] xl:h-full lg:h-full md:h-full sm:h-fit xl:w-fit lg:w-fit md:w-fit sm:w-full z-10 max-h-fullpage"
@@ -146,21 +154,32 @@ const PageView = () => {
           alt={pageURL.href}
         />
       )}
+      <SkeletonBox className="aspect-[2/3] absolute top-0 right-1/2 translate-x-1/2 z-[9] xl:h-full lg:h-full md:h-full sm:h-fit xl:w-fit lg:w-fit md:w-fit sm:w-full max-h-fullpage" />
       {Number(page) !== 1 && (
-        <button
+        <Link
           className="xl:flex lg:flex hidden justify-start items-center absolute top-0 left-0 w-1/2 h-full text-[--primaryText] hover:text-[--accentText]"
-          onClick={handlePreviousPage}
+          to={`/p/${chapterID}/${Number(page) - 1}`}
+          onClick={() => {
+            setLoading(true);
+            setPageURL(undefined);
+            setPage((Number(page) - 1).toString());
+          }}
         >
           <ChevronLeft className="w-8 h-8" />
-        </button>
+        </Link>
       )}
       {Number(page) !== maxPage && (
-        <button
+        <Link
           className="xl:flex lg:flex hidden justify-end items-center absolute top-0 right-0 w-1/2 h-full text-[--primaryText] hover:text-[--accentText]"
-          onClick={handleNextPage}
+          to={`/p/${chapterID}/${Number(page) + 1}`}
+          onClick={() => {
+            setLoading(true);
+            setPageURL(undefined);
+            setPage((Number(page) + 1).toString());
+          }}
         >
           <ChevronRight className="w-8 h-8" />
-        </button>
+        </Link>
       )}
     </div>
   );

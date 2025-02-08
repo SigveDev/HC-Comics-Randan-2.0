@@ -13,6 +13,8 @@ import { calculateHowLongAgo } from "../../functions/CalculateHowLongAgo";
 import { Heart, HeartHandshake, MessageSquare, Forward } from "lucide-react";
 import MiniPageView from "../miniPageView";
 import CommentViewH from "../commentViewH";
+import { Link } from "react-router-dom";
+import { SkeletonBox, SkeletonText } from "../skeleton";
 
 const ChapterView = () => {
   const chapterID = window.location.pathname.split("/")[2];
@@ -126,17 +128,19 @@ const ChapterView = () => {
     <div className="flex flex-col w-full h-fit">
       <div className="flex flex-col max-w-[1000px] w-full h-fit ml-auto mr-auto mt-12 mb-12 gap-12">
         <div className="flex flex-col gap-4 px-2 xl:flex-row lg:flex-row lg:px-0 xl:px-0 h-fit">
-          <a
-            href={"/p/" + chapterID + "/1"}
+          <Link
+            to={"/p/" + chapterID + "/1"}
             className="flex flex-col h-full gap-2"
           >
             <div className="relative h-full w-fit">
-              {thumbnail && (
+              {thumbnail ? (
                 <img
                   className="xl:w-80 lg:w-80 w-full aspect-[2/3]"
                   src={thumbnail.href}
                   alt={chapter?.title}
                 />
+              ) : (
+                <SkeletonBox className="xl:w-80 lg:w-80 w-full aspect-[2/3]" />
               )}
               <h3 className="absolute bottom-0 left-0 flex items-end justify-start w-full h-20 pb-4 pl-2 font-semibold text-[--primaryText] bg-gradient-to-t from-black to-transparent">
                 {chapter?.title}
@@ -151,32 +155,51 @@ const ChapterView = () => {
                 Posted {howLongAgo}
               </p>
             </div>
-          </a>
+          </Link>
           <div className="flex flex-col gap-2 grow bg-[--secondary]">
             <div className="flex flex-row w-full h-fit">
               <div className="flex flex-col w-full h-full m-2 lg:m-4 xl:m-4">
-                <h2 className="text-2xl font-bold text-[--primaryText]">
-                  {chapter?.title}
-                </h2>
-                <h3 className="mb-2 text-lg font-medium text-[--primaryText]">
-                  {chapter?.Titles.name} #{formatedNumber}
-                </h3>
-                <p className="mt-2 text-sm font-medium text-[--secondaryText]">
-                  Posted {howLongAgo}
-                </p>
-                <a
-                  href={"/u/" + chapter?.Author.$id}
-                  className="flex flex-row items-center justify-start w-full h-12 gap-4 mt-2"
-                >
-                  <img
-                    className="w-12 h-12 rounded-full"
-                    src={authorPFP}
-                    alt={chapter?.Author.name}
-                  />
-                  <p className="text-xl font-bold text-[--primaryText]">
-                    {chapter?.Author.name}
+                {chapter ? (
+                  <h2 className="text-2xl font-bold text-[--primaryText]">
+                    {chapter.title}
+                  </h2>
+                ) : (
+                  <SkeletonText className="w-1/2 h-7" />
+                )}
+                {chapter ? (
+                  <h3 className="mb-2 text-lg font-medium text-[--primaryText]">
+                    {chapter.Titles.name} #{formatedNumber}
+                  </h3>
+                ) : (
+                  <SkeletonText className="w-1/3 h-5 mb-2" />
+                )}
+                {howLongAgo ? (
+                  <p className="mt-2 text-sm font-medium text-[--secondaryText]">
+                    Posted {howLongAgo}
                   </p>
-                </a>
+                ) : (
+                  <SkeletonText className="w-1/4 h-3 mt-2" />
+                )}
+                {chapter ? (
+                  <Link
+                    to={"/u/" + chapter?.Author.$id}
+                    className="flex flex-row items-center justify-start w-full h-12 gap-4 mt-2"
+                  >
+                    <img
+                      className="w-12 h-12 rounded-full"
+                      src={authorPFP}
+                      alt={chapter?.Author.name}
+                    />
+                    <p className="text-xl font-bold text-[--primaryText]">
+                      {chapter?.Author.name}
+                    </p>
+                  </Link>
+                ) : (
+                  <div className="flex flex-row items-center justify-start w-full gap-4 mt-2 h-fit">
+                    <SkeletonBox className="w-12 h-12 rounded-full" />
+                    <SkeletonText className="w-1/2 h-6" />
+                  </div>
+                )}
               </div>
               <div className="flex flex-col items-center justify-between h-10 gap-4 mt-4 mr-4 w-fit">
                 {loggedIn &&
@@ -218,17 +241,34 @@ const ChapterView = () => {
               Descripton:
             </p>
             <hr className="w-auto mx-2 mt-2 mb-1 xl:mx-4 lg:mx-4" />
-            <p className="w-full h-full xl:pb-4 lg:pb-4 pb-2 lg:px-4 xl:px-4 px-2 text-[--primaryText] text-ellipsis">
-              {chapter?.description}
-            </p>
+            {chapter ? (
+              <p className="w-full h-full xl:pb-4 lg:pb-4 pb-2 lg:px-4 xl:px-4 px-2 text-[--primaryText] text-ellipsis">
+                {chapter.description}
+              </p>
+            ) : (
+              <SkeletonText className="w-full px-2 pb-2 h-15 xl:pb-4 lg:pb-4 lg:px-4 xl:px-4" />
+            )}
           </div>
         </div>
         <div className="flex flex-col items-center justify-center w-full gap-1 px-2 mb-4 lg:px-0 xl:px-0">
           <h3 className="text-lg font-bold text-[--primaryText]">Pages</h3>
           <div className="grid w-full xl:grid-cols-4 lg:grid-cols-4 grid-cols-2 gap-2 p-2 bg-[--secondary]">
-            {chapter?.pages.map((page: string, index: number) => {
-              return <MiniPageView pageId={page} index={index} key={index} />;
-            })}
+            {chapter ? (
+              chapter.pages.map((page: string, index: number) => {
+                return <MiniPageView pageId={page} index={index} key={index} />;
+              })
+            ) : (
+              <>
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </>
+            )}
           </div>
         </div>
       </div>

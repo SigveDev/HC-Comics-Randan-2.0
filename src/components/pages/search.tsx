@@ -12,9 +12,17 @@ import ChapterViewH from "../chapterViewH";
 import TitleViewH from "../titleViewH";
 import ArtViewH from "../artViewH";
 import AuthorViewH from "../authorViewH";
+import { SkeletonBox, SkeletonText } from "../skeleton";
 
 const SearchPage = () => {
-  const [searchResults, setSearchResults] = useState<SearchType>();
+  const emptySearchResults: SearchType = {
+    chapters: [],
+    titles: [],
+    authors: [],
+    art: [],
+  };
+  const [searchResults, setSearchResults] =
+    useState<SearchType>(emptySearchResults);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>();
   const [likedChapters, setLikedChapters] = useState<Chapter[]>();
@@ -94,52 +102,145 @@ const SearchPage = () => {
       <div
         className={`grid w-full ${tabb === "chapters" && "xl:grid-cols-2 lg:grid-cols-2 grid-cols-1"} ${tabb === "art" && "xl:grid-cols-6 lg:grid-cols-6 grid-cols-3"} ${tabb === "titles" && "xl:grid-cols-5 lg:grid-cols-3 grid-cols-1"} ${tabb === "authors" && "grid-cols-1"} gap-2 py-8 xl:px-12 lg:px-12 px-4 h-fit`}
       >
-        {tabb === "chapters" &&
-          searchResults?.chapters.map((chapter, index) => {
-            const likedStatus = likedChapters?.find(
-              (likedChapter: Chapter) => likedChapter.$id === chapter.$id
-            )
-              ? true
-              : false;
-            return (
-              <ChapterViewH
-                chapter={chapter}
-                likedStatus={likedStatus}
-                loggedIn={loggedIn}
-                userId={userId as string}
-                key={index}
-              />
-            );
-          })}
-        {tabb === "titles" &&
-          searchResults?.titles.map((title, index) => {
-            return <TitleViewH title={title} key={index} />;
-          })}
-        {tabb === "authors" &&
-          searchResults?.authors.map((author, index) => {
-            return (
-              <div className="w-3/5 justify-self-center">
-                <AuthorViewH author={author} key={index} />
+        {tabb === "chapters" ? (
+          searchResults ? (
+            searchResults.chapters.length > 0 ? (
+              searchResults.chapters.map((chapter, index) => {
+                const likedStatus = likedChapters?.find(
+                  (likedChapter: Chapter) => likedChapter.$id === chapter.$id
+                )
+                  ? true
+                  : false;
+                return (
+                  <ChapterViewH
+                    chapter={chapter}
+                    likedStatus={likedStatus}
+                    loggedIn={loggedIn}
+                    userId={userId as string}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <div className="flex items-center justify-center w-full p-4 col-span-full h-fit">
+                <h2 className="text-lg text-[--secondaryText] font-semibold">
+                  No chapters found
+                </h2>
               </div>
-            );
-          })}
-        {tabb === "art" &&
-          searchResults?.art.map((post, index) => {
-            const likedStatus = likedArt.find(
-              (likedArt: Art) => likedArt.$id === post.$id
             )
-              ? true
-              : false;
-            return (
-              <ArtViewH
-                art={post}
-                likedStatus={likedStatus}
-                loggedIn={loggedIn}
-                userId={userId as string}
-                key={index}
-              />
-            );
-          })}
+          ) : (
+            <>
+              <div className="w-full h-fit">
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+              <div className="w-full h-fit">
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+            </>
+          )
+        ) : (
+          <></>
+        )}
+        {tabb === "titles" ? (
+          searchResults ? (
+            searchResults.titles.length > 0 ? (
+              searchResults.titles.map((title, index) => {
+                return <TitleViewH title={title} key={index} />;
+              })
+            ) : (
+              <div className="flex items-center justify-center w-full p-4 col-span-full h-fit">
+                <h2 className="text-lg text-[--secondaryText] font-semibold">
+                  No titles found
+                </h2>
+              </div>
+            )
+          ) : (
+            <>
+              <div className="w-full h-fit">
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+              <div className="w-full h-fit">
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+              <div className="w-full h-fit">
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+            </>
+          )
+        ) : (
+          <></>
+        )}
+        {tabb === "authors" ? (
+          searchResults ? (
+            searchResults.authors.length > 0 ? (
+              searchResults.authors.map((author, index) => {
+                return (
+                  <div className="w-3/5 justify-self-center">
+                    <AuthorViewH author={author} key={index} />
+                  </div>
+                );
+              })
+            ) : (
+              <div className="flex items-center justify-center w-full p-4 col-span-full h-fit">
+                <h2 className="text-lg text-[--secondaryText] font-semibold">
+                  No authors found
+                </h2>
+              </div>
+            )
+          ) : (
+            <>
+              <SkeletonBox className="w-full aspect-[5/1]" />
+              <SkeletonBox className="w-full aspect-[5/1]" />
+              <SkeletonBox className="w-full aspect-[5/1]" />
+            </>
+          )
+        ) : (
+          <></>
+        )}
+        {tabb === "art" ? (
+          searchResults ? (
+            searchResults.art.length > 0 ? (
+              searchResults.art.map((post, index) => {
+                const likedStatus = likedArt.find(
+                  (likedArt: Art) => likedArt.$id === post.$id
+                )
+                  ? true
+                  : false;
+                return (
+                  <ArtViewH
+                    art={post}
+                    likedStatus={likedStatus}
+                    loggedIn={loggedIn}
+                    userId={userId as string}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <div className="flex items-center justify-center w-full p-4 col-span-full h-fit">
+                <h2 className="text-lg text-[--secondaryText] font-semibold">
+                  No art found
+                </h2>
+              </div>
+            )
+          ) : (
+            <>
+              <SkeletonBox className="w-full aspect-[2/3]" />
+              <SkeletonBox className="w-full aspect-[2/3]" />
+              <SkeletonBox className="w-full aspect-[2/3]" />
+              <SkeletonBox className="w-full aspect-[2/3]" />
+              <SkeletonBox className="w-full aspect-[2/3]" />
+              <SkeletonBox className="w-full aspect-[2/3]" />
+            </>
+          )
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

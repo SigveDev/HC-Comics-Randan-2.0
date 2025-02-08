@@ -2,6 +2,7 @@ import { calculateHowLongAgo } from "../functions/CalculateHowLongAgo";
 import { Chapter } from "../assets/types";
 import { getThumbnail } from "../lib/Appwrite";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const LatestRelease = (chapter: Chapter) => {
   const [thumbnail, setThumbnail] = useState<URL>();
@@ -30,7 +31,7 @@ const LatestRelease = (chapter: Chapter) => {
       <p className="flex items-center justify-start h-7 pl-2 font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
         Latest release
       </p>
-      <a href={"/c/" + chapter.$id} className="flex flex-col h-full gap-2">
+      <Link to={"/c/" + chapter.$id} className="flex flex-col h-full gap-2">
         <div className="relative w-full h-fit">
           {thumbnail && (
             <img
@@ -48,11 +49,11 @@ const LatestRelease = (chapter: Chapter) => {
           <p className="text-lg font-bold text-[--primaryText]">
             #{formatedNumber}
           </p>
-          <p className="text-sm font-medium text-[--secondaryText]">
+          <p className="text-sm font-medium text-[--secondary</div>Text]">
             Posted {howLongAgo}
           </p>
         </div>
-      </a>
+      </Link>
     </div>
   );
 };

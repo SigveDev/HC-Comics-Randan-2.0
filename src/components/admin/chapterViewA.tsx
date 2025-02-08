@@ -3,6 +3,7 @@ import { Chapter } from "../../assets/types";
 import { getThumbnailPreview } from "../../lib/Appwrite";
 import { calculateHowLongAgo } from "../../functions/CalculateHowLongAgo";
 import { BarChart3, Pencil } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ChapterViewA = ({ chapter }: { chapter: Chapter }) => {
   const [thumbnail, setThumbnail] = useState<URL>();
@@ -30,8 +31,8 @@ const ChapterViewA = ({ chapter }: { chapter: Chapter }) => {
 
   return (
     <div className="flex flex-row w-full gap-2 h-52 bg-[--secondary]">
-      <a
-        href={"/c/" + chapter.$id}
+      <Link
+        to={"/c/" + chapter.$id}
         className="flex flex-row w-full h-full gap-2"
       >
         {thumbnail && (
@@ -52,20 +53,20 @@ const ChapterViewA = ({ chapter }: { chapter: Chapter }) => {
             Posted {howLongAgo}
           </p>
         </div>
-      </a>
+      </Link>
       <div className="flex flex-col justify-between h-full gap-3 py-3 pr-3 w-fit">
-        <a
+        <Link
           className="flex flex-row gap-2 text-[--primaryText]"
-          href={"/admin/edit/c/" + chapter.$id}
+          to={"/admin/edit/c/" + chapter.$id}
         >
           <Pencil />
-        </a>
-        <a
+        </Link>
+        <Link
           className="flex flex-row gap-2 text-[--primaryText]"
-          href={"/admin/stats/c/" + chapter.$id}
+          to={"/admin/stats/c/" + chapter.$id}
         >
           <BarChart3 />
-        </a>
+        </Link>
       </div>
     </div>
   );

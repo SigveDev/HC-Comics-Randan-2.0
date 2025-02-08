@@ -17,6 +17,7 @@ import {
 import { Plus, Check } from "lucide-react";
 import TitleViewH from "../titleViewH";
 import ArtViewH from "../artViewH";
+import { SkeletonBox, SkeletonText } from "../skeleton";
 
 const AuthorPage = () => {
   const authorID = window.location.pathname.split("/")[2];
@@ -85,16 +86,24 @@ const AuthorPage = () => {
     <div className="flex flex-col items-center justify-center w-full gap-8 mt-8 mb-8 h-fit">
       <div className="w-full h-fit">
         <div className="flex flex-row w-full h-24 gap-4 px-4 mt-8 xl:px-28 lg:px-28">
-          <img
-            className="object-cover h-full rounded-full aspect-square"
-            src={authorPFP}
-            alt="Author Image"
-          />
+          {authorPFP ? (
+            <img
+              className="object-cover h-full rounded-full aspect-square"
+              src={authorPFP}
+              alt="Author Image"
+            />
+          ) : (
+            <SkeletonBox className="h-full rounded-full aspect-square" />
+          )}
           <div className="flex flex-col w-full h-full">
             <div className="flex flex-row justify-between">
-              <h1 className="text-2xl font-bold text-[--primaryText]">
-                {author?.name}
-              </h1>
+              {author ? (
+                <h1 className="text-2xl font-bold text-[--primaryText]">
+                  {author.name}
+                </h1>
+              ) : (
+                <SkeletonText className="w-1/2 h-8" />
+              )}
               {loggedIn &&
                 (followStatus ? (
                   <button
@@ -139,29 +148,57 @@ const AuthorPage = () => {
       </div>
       {tabb === "titles" ? (
         <div className="grid w-full h-full grid-cols-1 gap-12 px-4 py-8 xl:px-12 lg:px-12 xl:grid-cols-3 lg:grid-cols-3">
-          {titles?.map((title, index) => {
-            return <TitleViewH title={title} key={index} />;
-          })}
+          {titles.length > 0 ? (
+            titles.map((title, index) => {
+              return <TitleViewH title={title} key={index} />;
+            })
+          ) : (
+            <>
+              <div>
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+              <div>
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+              <div>
+                <SkeletonText className="w-full mb-1 h-7" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </div>
+            </>
+          )}
         </div>
       ) : (
         <div className="flex flex-col w-full h-full gap-4 px-4 py-8 xl:px-12 lg:px-12">
           <div className="grid grid-cols-3 gap-2 xl:grid-cols-6 lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-3">
-            {arts.map((post: Art, index: number) => {
-              const likedStatus = likedArt.find(
-                (likedArt: Art) => likedArt.$id === post.$id
-              )
-                ? true
-                : false;
-              return (
-                <ArtViewH
-                  art={post}
-                  likedStatus={likedStatus}
-                  loggedIn={loggedIn}
-                  userId={userId as string}
-                  key={index}
-                />
-              );
-            })}
+            {arts.length > 0 ? (
+              arts.map((post: Art, index: number) => {
+                const likedStatus = likedArt.find(
+                  (likedArt: Art) => likedArt.$id === post.$id
+                )
+                  ? true
+                  : false;
+                return (
+                  <ArtViewH
+                    art={post}
+                    likedStatus={likedStatus}
+                    loggedIn={loggedIn}
+                    userId={userId as string}
+                    key={index}
+                  />
+                );
+              })
+            ) : (
+              <>
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+                <SkeletonBox className="w-full aspect-[2/3]" />
+              </>
+            )}
           </div>
         </div>
       )}

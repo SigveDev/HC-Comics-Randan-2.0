@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { loginUser } from "../../lib/Appwrite";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -46,9 +47,9 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           {error && <p className="text-red-600">{error}</p>}
-          <a href="/register" className="text-[--accentText]">
+          <Link to="/register" className="text-[--accentText]">
             New user?
-          </a>
+          </Link>
           <button
             className="w-2/3 h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly]"
             type="submit"
@@ -56,12 +57,12 @@ const Login = () => {
             Login
           </button>
           <hr className="w-full mt-4 mb-4" />
-          <a
-            href={(import.meta as any).env.VITE_HC_AUTH_ENDPOINT}
+          <Link
+            to={(import.meta as any).env.VITE_HC_AUTH_ENDPOINT}
             className="flex items-center justify-center w-1/3 h-12 text-[--primaryText] border-2 rounded-md border-[--primary] bg-[--secondary]"
           >
             HC Auth
-          </a>
+          </Link>
         </form>
       </div>
     </div>

@@ -4,6 +4,7 @@ import {
   getMyAuthor,
   checkAuthorTeamsMembership,
   createAuthor,
+  getAdminStatusForLoggedInUser,
 } from "../../../lib/Appwrite";
 import ChaptersListA from "../../../components/admin/chaptersListA";
 import ArtListA from "../../../components/admin/artListA";
@@ -18,6 +19,8 @@ const AdminHome = () => {
   const [author, setAuthor] = useState<Author | null>(null);
   const [createAuthorModal, setCreateAuthorModal] = useState<boolean>(false);
   const [tabb, setTabb] = useState<string>("chapters");
+
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
   const [name, setName] = useState<string>("");
 
@@ -55,6 +58,14 @@ const AdminHome = () => {
     };
     fetchAuthor();
   }, []);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const isAdmin = await getAdminStatusForLoggedInUser();
+      setIsAdmin(isAdmin);
+    };
+    checkAdmin();
+  });
 
   const handleCreateAuthor = async () => {
     if (name && tempFile) {
@@ -103,12 +114,14 @@ const AdminHome = () => {
           Upload
         </button>
         <br />
-        <button
-          className={`flex items-center justify-start h-12 text-xl ${tabb === "settings" ? "w-full pl-6" : "pl-2 w-2/3 hover:pl-4 hover:w-5/6"} font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent`}
-          onClick={() => setTabb("settings")}
-        >
-          Page Settings
-        </button>
+        {isAdmin && (
+          <button
+            className={`flex items-center justify-start h-12 text-xl ${tabb === "settings" ? "w-full pl-6" : "pl-2 w-2/3 hover:pl-4 hover:w-5/6"} font-semibold text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent`}
+            onClick={() => setTabb("settings")}
+          >
+            Page Settings
+          </button>
+        )}
       </div>
       <div className="flex flex-col w-full col-span-7 gap-6 px-16 h-fit">
         {tabb === "chapters" && author && (
@@ -125,7 +138,7 @@ const AdminHome = () => {
         )}
         {tabb === "newPosts" && <CreatePost />}
         {tabb === "upload" && <Upload />}
-        {tabb === "settings" && <PageSettings />}
+        {tabb === "settings" && isAdmin && <PageSettings />}
       </div>
 
       {createAuthorModal && (

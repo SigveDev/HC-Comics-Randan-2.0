@@ -3,6 +3,7 @@ import { getCommentsByUserId, getPublicUser } from "../lib/Appwrite";
 import { PublicProfile, Comments, CommentsRequest } from "@/assets/types";
 
 import Comment from "./comment";
+import { SkeletonBox } from "./skeleton";
 
 const ProfileCommentsView = () => {
   const [publicUser, setPublicUser] = useState<PublicProfile>();
@@ -34,16 +35,29 @@ const ProfileCommentsView = () => {
         Comments
       </p>
       <div className="flex flex-col w-full gap-3 h-fit">
-        {comments &&
-          comments.map((commentData: Comments) => {
-            return (
-              <Comment
-                commentData={commentData}
-                publicUserId={publicUser?.$id as string}
-                key={commentData.$id}
-              />
-            );
-          })}
+        {comments ? (
+          comments.length > 0 ? (
+            comments.map((commentData: Comments) => {
+              return (
+                <Comment
+                  commentData={commentData}
+                  publicUserId={publicUser?.$id as string}
+                  key={commentData.$id}
+                />
+              );
+            })
+          ) : (
+            <>
+              <SkeletonBox className="w-full h-52" />
+            </>
+          )
+        ) : (
+          <div className="flex items-center justify-center w-full p-4 col-span-full h-fit">
+            <h2 className="text-lg text-[--secondaryText] font-semibold">
+              No Comments
+            </h2>
+          </div>
+        )}
       </div>
     </div>
   );

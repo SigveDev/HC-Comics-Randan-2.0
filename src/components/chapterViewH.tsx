@@ -9,6 +9,7 @@ import { calculateHowLongAgo } from "../functions/CalculateHowLongAgo";
 import { Heart, HeartHandshake, MessageSquare, Forward } from "lucide-react";
 import { Drawer } from "vaul";
 import CommentViewH from "./commentViewH";
+import { Link } from "react-router-dom";
 
 const ChapterViewH = ({
   chapter,
@@ -94,8 +95,8 @@ const ChapterViewH = ({
       }}
     >
       <div className="flex flex-row w-full gap-2 h-52 bg-[--secondary]">
-        <a
-          href={"/c/" + chapter.$id}
+        <Link
+          to={"/c/" + chapter.$id}
           className="flex flex-row w-full h-full gap-2"
         >
           {thumbnail && (
@@ -114,15 +115,15 @@ const ChapterViewH = ({
             </h3>
             <h3 className="mb-2 text-sm font-medium text-[--primaryText]">
               By:{" "}
-              <a href={"/u/" + chapter.Author.$id} className="underline">
+              <Link to={"/u/" + chapter.Author.$id} className="underline">
                 {chapter.Author.name}
-              </a>
+              </Link>
             </h3>
             <p className="mt-auto text-sm font-medium text-[--secondaryText] mb-2">
               Posted {howLongAgo}
             </p>
           </div>
-        </a>
+        </Link>
         <div className="flex flex-col gap-3 mt-3 mr-3 h-fit w-fit">
           {loggedIn &&
             (liked ? (

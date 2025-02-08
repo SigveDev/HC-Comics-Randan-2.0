@@ -3,6 +3,7 @@ import { getChapterByID, getLiked } from "../lib/Appwrite";
 import { User, Chapter, LikesRequest } from "../assets/types";
 
 import ChapterViewH from "./chapterViewH";
+import { SkeletonBox } from "./skeleton";
 
 const Current = (user: User) => {
   const [chapter, setChapter] = useState<Chapter>();
@@ -41,13 +42,15 @@ const Current = (user: User) => {
       <p className="flex items-center justify-start h-7 pl-2 font-semibold text-lg text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">
         Reading
       </p>
-      {chapter && (
+      {chapter ? (
         <ChapterViewH
           chapter={chapter}
           likedStatus={liked}
           loggedIn={true}
           userId={user.$id as string}
         />
+      ) : (
+        <SkeletonBox className="w-full h-52" />
       )}
     </div>
   );

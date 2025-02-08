@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Drawer } from "vaul";
 import CommentViewH from "./commentViewH";
+import { Link } from "react-router-dom";
 
 const ArtViewH = ({
   art,
@@ -188,15 +189,15 @@ const ArtViewH = ({
                   >
                     <Forward />
                   </button>
-                  <a
-                    href={"/a/" + art.$id}
+                  <Link
+                    to={"/a/" + art.$id}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center justify-center w-full font-semibold text-[--primaryText] h-fit ml-2"
                     onClick={removeView}
                   >
                     <ExternalLink />
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
