@@ -107,11 +107,17 @@ export type ColorPaletteRequest = {
   total: number;
 };
 
+export type TempSocials = {
+  link: string;
+  type: string;
+};
+
 export type Socials = {
   $id: string;
   name: string;
   link: string;
   icon: string;
+  type: string;
 };
 
 export type SocialsRequest = {

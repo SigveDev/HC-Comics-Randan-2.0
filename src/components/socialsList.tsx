@@ -10,6 +10,11 @@ const SocialsList = () => {
   useEffect(() => {
     const fetchSocials = async () => {
       const socials: SocialsRequest = (await getSocials()) as SocialsRequest;
+      socials.documents.filter((social) => {
+        if (social.link !== "" && social.link !== null) {
+          return social;
+        }
+      });
       setSocials(socials.documents);
     };
     fetchSocials();

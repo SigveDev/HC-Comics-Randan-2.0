@@ -1,10 +1,18 @@
-import { Chapter, ColorPalette, ColorPaletteRequest } from "@/assets/types";
+import {
+  Chapter,
+  ColorPalette,
+  ColorPaletteRequest,
+  SocialsRequest,
+  TempSocials,
+} from "@/assets/types";
 import {
   createColorPalette,
   deleteColorPalette,
   getColorPalattes,
   getLatestChapter,
+  getSocials,
   updateColorPalette,
+  updateSocials,
 } from "./../../lib/Appwrite";
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronLeft } from "lucide-react";
@@ -43,6 +51,25 @@ const PageSettings = () => {
     useState<SimpleColorPalette>();
 
   const [newColorPalettes, setNewColorPalettes] = useState<NewColorPalette[]>();
+
+  const [socials, setSocials] = useState<TempSocials[]>();
+
+  useEffect(() => {
+    const fetchSocials = async () => {
+      const socials: SocialsRequest = (await getSocials()) as SocialsRequest;
+      const tempSocials = socials.documents.map((social) => {
+        return { link: social.link, type: social.type };
+      });
+      setSocials(tempSocials);
+    };
+    fetchSocials();
+  }, []);
+
+  const saveSocials = async () => {
+    if (socials) {
+      await updateSocials(socials);
+    }
+  };
 
   useEffect(() => {
     const fetchColors = async () => {
@@ -583,6 +610,244 @@ const PageSettings = () => {
           >
             Create New
           </button>
+        </div>
+      </div>
+      <div className="flex flex-col w-full gap-4 mt-16 h-fit">
+        <h2 className="w-fit h-fit font-semibold text-lg text-[--primaryText]">
+          Links
+        </h2>
+        <div className="flex flex-col w-full gap-4 h-fit">
+          <h3 className="w-fit h-fit font-semibold text-md text-[--primaryText]">
+            Socials
+          </h3>
+          <div className="flex flex-col w-full gap-2 h-fit">
+            <div className="flex flex-row w-full gap-2 h-fit">
+              <div className="flex flex-col w-full gap-2 h-fit">
+                <label htmlFor="Instagram" className="text-[--primaryText]">
+                  Instagram link:
+                </label>
+                <input
+                  className="w-full h-10 p-2 text-lg text-[--primaryText] bg-[--background] border border-[--primary] focus-visible:outline-none"
+                  placeholder="Instagram"
+                  name="Instagram"
+                  id="Instagram"
+                  value={
+                    socials
+                      ? socials.find((social) => social.type === "instagram")
+                          ?.link
+                      : ""
+                  }
+                  onChange={(e) => {
+                    setSocials((prevSocials = []) => {
+                      const existingSocial = prevSocials.find(
+                        (social) => social.type === "instagram"
+                      );
+                      if (existingSocial) {
+                        return prevSocials.map((social) =>
+                          social.type === "instagram"
+                            ? { ...social, link: e.target.value }
+                            : social
+                        );
+                      } else {
+                        return [
+                          ...prevSocials,
+                          { link: e.target.value, type: "instagram" },
+                        ];
+                      }
+                    });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col w-full gap-2 h-fit">
+                <label htmlFor="X" className="text-[--primaryText]">
+                  X link:
+                </label>
+                <input
+                  className="w-full h-10 p-2 text-lg text-[--primaryText] bg-[--background] border border-[--primary] focus-visible:outline-none"
+                  placeholder="X"
+                  name="X"
+                  id="X"
+                  value={
+                    socials
+                      ? socials.find((social) => social.type === "x")?.link
+                      : ""
+                  }
+                  onChange={(e) => {
+                    setSocials((prevSocials = []) => {
+                      const existingSocial = prevSocials.find(
+                        (social) => social.type === "x"
+                      );
+                      if (existingSocial) {
+                        return prevSocials.map((social) =>
+                          social.type === "x"
+                            ? { ...social, link: e.target.value }
+                            : social
+                        );
+                      } else {
+                        return [
+                          ...prevSocials,
+                          { link: e.target.value, type: "x" },
+                        ];
+                      }
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex flex-row w-full gap-2 h-fit">
+              <div className="flex flex-col w-full gap-2 h-fit">
+                <label htmlFor="Redit" className="text-[--primaryText]">
+                  Redit link:
+                </label>
+                <input
+                  className="w-full h-10 p-2 text-lg text-[--primaryText] bg-[--background] border border-[--primary] focus-visible:outline-none"
+                  placeholder="Redit"
+                  name="Redit"
+                  id="Redit"
+                  value={
+                    socials
+                      ? socials.find((social) => social.type === "redit")?.link
+                      : ""
+                  }
+                  onChange={(e) => {
+                    setSocials((prevSocials = []) => {
+                      const existingSocial = prevSocials.find(
+                        (social) => social.type === "redit"
+                      );
+                      if (existingSocial) {
+                        return prevSocials.map((social) =>
+                          social.type === "redit"
+                            ? { ...social, link: e.target.value }
+                            : social
+                        );
+                      } else {
+                        return [
+                          ...prevSocials,
+                          { link: e.target.value, type: "redit" },
+                        ];
+                      }
+                    });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col w-full gap-2 h-fit">
+                <label htmlFor="Discord" className="text-[--primaryText]">
+                  Discord link:
+                </label>
+                <input
+                  className="w-full h-10 p-2 text-lg text-[--primaryText] bg-[--background] border border-[--primary] focus-visible:outline-none"
+                  placeholder="Discord"
+                  name="Discord"
+                  id="Discord"
+                  value={
+                    socials
+                      ? socials.find((social) => social.type === "discord")
+                          ?.link
+                      : ""
+                  }
+                  onChange={(e) => {
+                    setSocials((prevSocials = []) => {
+                      const existingSocial = prevSocials.find(
+                        (social) => social.type === "discord"
+                      );
+                      if (existingSocial) {
+                        return prevSocials.map((social) =>
+                          social.type === "discord"
+                            ? { ...social, link: e.target.value }
+                            : social
+                        );
+                      } else {
+                        return [
+                          ...prevSocials,
+                          { link: e.target.value, type: "discord" },
+                        ];
+                      }
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex flex-row w-full gap-2 h-fit">
+              <div className="flex flex-col w-full gap-2 h-fit">
+                <label htmlFor="Facebook" className="text-[--primaryText]">
+                  Facebook link:
+                </label>
+                <input
+                  className="w-full h-10 p-2 text-lg text-[--primaryText] bg-[--background] border border-[--primary] focus-visible:outline-none"
+                  placeholder="Facebook"
+                  name="Facebook"
+                  id="Facebook"
+                  value={
+                    socials
+                      ? socials.find((social) => social.type === "facebook")
+                          ?.link
+                      : ""
+                  }
+                  onChange={(e) => {
+                    setSocials((prevSocials = []) => {
+                      const existingSocial = prevSocials.find(
+                        (social) => social.type === "facebook"
+                      );
+                      if (existingSocial) {
+                        return prevSocials.map((social) =>
+                          social.type === "facebook"
+                            ? { ...social, link: e.target.value }
+                            : social
+                        );
+                      } else {
+                        return [
+                          ...prevSocials,
+                          { link: e.target.value, type: "facebook" },
+                        ];
+                      }
+                    });
+                  }}
+                />
+              </div>
+              <div className="flex flex-col w-full gap-2 h-fit">
+                <label htmlFor="Youtube" className="text-[--primaryText]">
+                  Youtube link:
+                </label>
+                <input
+                  className="w-full h-10 p-2 text-lg text-[--primaryText] bg-[--background] border border-[--primary] focus-visible:outline-none"
+                  placeholder="Youtube"
+                  name="Youtube"
+                  id="Youtube"
+                  value={
+                    socials
+                      ? socials.find((social) => social.type === "youtube")
+                          ?.link || ""
+                      : ""
+                  }
+                  onChange={(e) => {
+                    setSocials((prevSocials = []) => {
+                      const existingSocial = prevSocials.find(
+                        (social) => social.type === "youtube"
+                      );
+                      if (existingSocial) {
+                        return prevSocials.map((social) =>
+                          social.type === "youtube"
+                            ? { ...social, link: e.target.value }
+                            : social
+                        );
+                      } else {
+                        return [
+                          ...prevSocials,
+                          { link: e.target.value, type: "youtube" },
+                        ];
+                      }
+                    });
+                  }}
+                />
+              </div>
+            </div>
+            <button
+              className="w-full h-10 p-2 text-[--primaryText] bg-gradient-to-r from-[--fourthly] via-[--primary] to-[--fourthly] mt-4"
+              onClick={saveSocials}
+            >
+              Save
+            </button>
+          </div>
         </div>
       </div>
     </div>

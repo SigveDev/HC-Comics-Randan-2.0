@@ -21,8 +21,6 @@ const LikedView = (user: User) => {
     fetchLiked();
   }, []);
 
-  console.log(liked);
-
   return (
     <div className="flex flex-col w-full col-span-1 gap-2 xl:col-span-3 lg:col-span-3 h-fit">
       <p className="flex items-center justify-start h-7 pl-2 font-semibold text-lg text-[--primaryText] bg-gradient-to-r from-[--primary] via-[--thirdly] via-55% to-transparent">

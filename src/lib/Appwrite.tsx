@@ -4,6 +4,7 @@ import {
   Chapter,
   FollowingRequest,
   LikesRequest,
+  TempSocials,
   Title,
 } from "@/assets/types";
 import {
@@ -915,6 +916,94 @@ export const getSocials = async () => {
       (import.meta as any).env.VITE_SOCIALS_TABLE_ID || ""
     );
     return socials;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateSocials = async (socials: TempSocials[]) => {
+  try {
+    socials.forEach(async (social) => {
+      const existingSocial = await databases.listDocuments(
+        (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+        (import.meta as any).env.VITE_SOCIALS_TABLE_ID || "",
+        [Query.equal("type", social.type)]
+      );
+      if (existingSocial.total === 0) {
+        let socialIcon = "";
+        let socialName = "";
+
+        switch (social.type) {
+          case "instagram":
+            socialIcon = "65a99a7be893a6eaf4d3";
+            break;
+          case "x":
+            socialIcon = "67aa6a2a0020ba5995d3";
+            break;
+          case "redit":
+            socialIcon = "65a99a77144359c5202f";
+            break;
+          case "discord":
+            socialIcon = "65a99a72246dd87e2566";
+            break;
+          case "facebook":
+            socialIcon = "67aa6a5e000c7a3da651";
+            break;
+          case "youtube":
+            socialIcon = "67aa6a63001f51fce807";
+            break;
+          default:
+            socialIcon = "";
+            break;
+        }
+
+        switch (social.type) {
+          case "instagram":
+            socialName = "@";
+            break;
+          case "x":
+            socialName = "/";
+            break;
+          case "redit":
+            socialName = "r/";
+            break;
+          case "discord":
+            socialName = "/";
+            break;
+          case "facebook":
+            socialName = "/";
+            break;
+          case "youtube":
+            socialName = "/@";
+            break;
+          default:
+            socialName = "";
+            break;
+        }
+
+        await databases.createDocument(
+          (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+          (import.meta as any).env.VITE_SOCIALS_TABLE_ID || "",
+          ID.unique(),
+          {
+            name: socialName + social.type,
+            link: social.link,
+            icon: socialIcon,
+            type: social.type,
+          }
+        );
+      } else {
+        await databases.updateDocument(
+          (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+          (import.meta as any).env.VITE_SOCIALS_TABLE_ID || "",
+          existingSocial.documents[0].$id,
+          {
+            link: social.link,
+          }
+        );
+      }
+    });
+    return true;
   } catch (error) {
     return error;
   }
