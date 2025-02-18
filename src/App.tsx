@@ -32,6 +32,9 @@ import VerifyEmailPage from "./components/pages/verifyEmail";
 import AuthorPage from "./components/pages/authorPage";
 
 import AdminHome from "./components/pages/admin/adminHome";
+import EditChapterForm from "./components/admin/edit/editChapterForm";
+import EditArtForm from "./components/admin/edit/editArtForm";
+import EditTitleForm from "./components/admin/edit/editTitleForm";
 
 function App() {
   const [runOnce, setRunOnce] = useState<boolean>(false);
@@ -219,6 +222,12 @@ function App() {
             <Route path="email/verify" element={<VerifyEmailPage />} />
             <Route path="fallback/:jwt" element={<Fallback />} />
             <Route path="admin" element={<AdminHome />} />
+            <Route
+              path="admin/edit/c/:chapterID"
+              element={<EditChapterForm />}
+            />
+            <Route path="admin/edit/a/:artID" element={<EditArtForm />} />
+            <Route path="admin/edit/t/:titleID" element={<EditTitleForm />} />
           </Route>
         </Routes>
       </div>

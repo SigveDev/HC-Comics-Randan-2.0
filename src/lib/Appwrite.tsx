@@ -2140,6 +2140,39 @@ export const createChapter = async (
   }
 };
 
+export const updateChapter = async (
+  chapterId: string,
+  title: string,
+  thumbnailId: string,
+  pageIds: string[],
+  Title: string,
+  chapterIndex: number,
+  description: string,
+  ColorPalette: string,
+  subtitle: string
+) => {
+  try {
+    const updatedChapter = await databases.updateDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_CHAPTERS_TABLE_ID || "",
+      chapterId,
+      {
+        title: title,
+        description: description,
+        pages: pageIds,
+        thumbnail: thumbnailId,
+        Titles: Title,
+        ColorPalette: ColorPalette,
+        number: chapterIndex,
+        subtitle: subtitle,
+      }
+    );
+    return updatedChapter;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const createArt = async (
   title: string,
   description: string,
@@ -2192,6 +2225,29 @@ export const createArt = async (
   }
 };
 
+export const updateArt = async (
+  artId: string,
+  title: string,
+  description: string,
+  artCoverID: string
+) => {
+  try {
+    const updatedArt = await databases.updateDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_ART_TABLE_ID || "",
+      artId,
+      {
+        title: title,
+        description: description,
+        image: artCoverID,
+      }
+    );
+    return updatedArt;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const createTitle = async (
   title: string,
   description: string,
@@ -2239,6 +2295,31 @@ export const createTitle = async (
       ]
     );
     return newTitle;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateTitle = async (
+  titleId: string,
+  title: string,
+  description: string,
+  thumbnailID: string,
+  frontpage: boolean
+) => {
+  try {
+    const updatedTitle = await databases.updateDocument(
+      (import.meta as any).env.VITE_HC_COMIC_DB_ID || "",
+      (import.meta as any).env.VITE_TITLES_TABLE_ID || "",
+      titleId,
+      {
+        name: title,
+        description: description,
+        thumbnail: thumbnailID,
+        Frontpage: frontpage,
+      }
+    );
+    return updatedTitle;
   } catch (error) {
     return error;
   }
